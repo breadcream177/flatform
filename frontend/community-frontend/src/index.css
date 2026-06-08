@@ -1,0 +1,41 @@
+:root {
+  --text: #3d4d3e;
+  --text-h: #1c2b1e;
+  --bg: #ffffff;
+  --border: #d9e1d8;
+
+  font-family: system-ui, 'Segoe UI', Roboto, 'Malgun Gothic', sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body {
+  background: #ffffff;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  color: inherit;
+}
