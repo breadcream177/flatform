@@ -74,43 +74,46 @@ const emptyMainErrors: MainErrorState = {
 };
 
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-const shoppingThemes = [
-  { label: '취업 준비', keyword: '취업 준비 아이템' },
-  { label: '면접 복장', keyword: '면접 복장' },
-  { label: '노트북', keyword: '노트북' },
-  { label: '책상 정리', keyword: '책상 정리' },
-  { label: '자격증 교재', keyword: '자격증 교재' },
-];
 const newsTabs = [
   {
     label: '뉴스스탠드',
     keyword: '취업 실무',
     subLabel: '전체언론사',
     homeUrl: 'https://news.naver.com',
+    layout: 'grid',
+    topics: ['취업 실무', '청년 일자리', '직무 역량', '채용 트렌드'],
   },
   {
     label: '언론사편집',
     keyword: '언론사 주요 뉴스',
     subLabel: '분야별 뉴스',
     homeUrl: 'https://news.naver.com/main/list.naver?mode=LPOD&mid=sec',
+    layout: 'press',
+    topics: ['속보', '정치', '사회', '생활문화'],
   },
   {
     label: '엔터',
     keyword: '엔터 뉴스',
     subLabel: '드라마 · 영화 · 뮤직',
     homeUrl: 'https://entertain.naver.com',
+    layout: 'list',
+    topics: ['드라마', '영화', '뮤직', '연예'],
   },
   {
     label: '스포츠',
     keyword: '스포츠 뉴스',
     subLabel: '월드컵 · 야구 · 축구',
     homeUrl: 'https://sports.news.naver.com',
+    layout: 'list',
+    topics: ['야구', '축구', '농구', 'e스포츠'],
   },
   {
     label: 'LIVE',
     keyword: '라이브 뉴스',
     subLabel: '실시간 이슈',
     homeUrl: 'https://news.naver.com',
+    layout: 'compact',
+    topics: ['실시간 이슈', '속보', '라이브', '오늘의 뉴스'],
     live: true,
   },
   {
@@ -118,18 +121,24 @@ const newsTabs = [
     keyword: '게임 뉴스',
     subLabel: '게임라운지 · e스포츠',
     homeUrl: 'https://game.naver.com',
+    layout: 'media',
+    topics: ['게임', 'e스포츠', 'PC게임', '모바일게임'],
   },
   {
     label: '경제',
     keyword: '경제 뉴스',
     subLabel: '증시 · 산업 · 금융',
     homeUrl: 'https://finance.naver.com/news',
+    layout: 'compact',
+    topics: ['증시', '환율', '산업', '금융'],
   },
   {
     label: '쇼핑투데이',
     keyword: '쇼핑 뉴스',
     subLabel: '쇼핑 트렌드',
     homeUrl: 'https://shopping.naver.com',
+    layout: 'media',
+    topics: ['쇼핑 트렌드', '브랜드', '핫딜', '신상품'],
   },
 ];
 const shoppingTabs = [
@@ -137,31 +146,37 @@ const shoppingTabs = [
     label: '쇼핑',
     keyword: '쇼핑',
     benefit: '실제 네이버 쇼핑 결과를 기준으로 상품을 보여줍니다.',
+    themes: ['오늘의 특가', '생활용품', '디지털', '패션'],
   },
   {
     label: '맨즈',
     keyword: '남성 패션',
     benefit: '남성 패션과 출근룩 중심의 상품 결과입니다.',
+    themes: ['남성 셔츠', '남성 신발', '백팩', '출근룩'],
   },
   {
     label: '브랜드샵',
     keyword: '브랜드 상품',
     benefit: '브랜드 상품과 공식몰 성격의 결과를 우선 확인합니다.',
+    themes: ['공식 브랜드', '신상품', '프리미엄', '베스트셀러'],
   },
   {
     label: 'MY추천',
     keyword: '취업 준비 아이템',
     benefit: 'Between Jobs 흐름에 맞춘 취업 준비용 추천 결과입니다.',
+    themes: ['취업 준비', '면접 복장', '노트북', '자격증 교재'],
   },
   {
     label: '추천핫딜',
     keyword: '핫딜 상품',
     benefit: '가격 메리트가 있는 상품 키워드로 다시 조회합니다.',
+    themes: ['핫딜', '할인 상품', '가성비', '오늘 특가'],
   },
   {
     label: '쇼핑라이브',
     keyword: '쇼핑 라이브',
     benefit: '라이브 쇼핑과 실시간 판매 키워드 중심 결과입니다.',
+    themes: ['라이브 쇼핑', '방송 상품', '인기 라이브', '실시간 특가'],
   },
 ];
 const shoppingMallLinks = [
@@ -186,14 +201,54 @@ const webtoonWeeks = [
   { label: '일요웹툰', value: 'sun' },
 ];
 const contentCategories = [
-  { label: '추천', keyword: '추천 콘텐츠', type: 'image' },
-  { label: '카테크', keyword: '카테크', type: 'image' },
-  { label: '웹툰', keyword: '인기 웹툰', type: 'webtoon' },
-  { label: '패션뷰티', keyword: '패션 뷰티', type: 'image' },
-  { label: '리빙푸드', keyword: '리빙 푸드', type: 'image' },
-  { label: '책방', keyword: '책 추천', type: 'image' },
-  { label: '지식', keyword: '지식 콘텐츠', type: 'image' },
-  { label: '건강', keyword: '건강 정보', type: 'image' },
+  {
+    label: '추천',
+    keyword: '추천 콘텐츠',
+    type: 'image',
+    topics: ['오늘의 이슈', '짧은 콘텐츠', '인기 콘텐츠', '트렌드'],
+  },
+  {
+    label: '카테크',
+    keyword: '카테크',
+    type: 'image',
+    topics: ['전기차', '모빌리티', '자동차 관리', '신차'],
+  },
+  {
+    label: '웹툰',
+    keyword: '인기 웹툰',
+    type: 'webtoon',
+    topics: [],
+  },
+  {
+    label: '패션뷰티',
+    keyword: '패션 뷰티',
+    type: 'image',
+    topics: ['출근룩', '면접 스타일', '스킨케어', '헤어'],
+  },
+  {
+    label: '리빙푸드',
+    keyword: '리빙 푸드',
+    type: 'image',
+    topics: ['집밥', '정리 수납', '인테리어', '간편식'],
+  },
+  {
+    label: '책방',
+    keyword: '책 추천',
+    type: 'image',
+    topics: ['자기계발', '취업 도서', 'IT 도서', '경제 경영'],
+  },
+  {
+    label: '지식',
+    keyword: '지식 콘텐츠',
+    type: 'image',
+    topics: ['실무 지식', '자격증', '문서 작성', 'AI 활용'],
+  },
+  {
+    label: '건강',
+    keyword: '건강 정보',
+    type: 'image',
+    topics: ['수면', '스트레칭', '식단', '멘탈 관리'],
+  },
 ];
 
 type ContentCategory = (typeof contentCategories)[number];
@@ -363,7 +418,7 @@ function MainPage() {
     shoppingTabs[3].label
   );
   const [activeShoppingTheme, setActiveShoppingTheme] = useState(
-    shoppingThemes[0].keyword
+    shoppingTabs[3].keyword
   );
   const [activeContentCategory, setActiveContentCategory] = useState(
     contentCategories[0].label
@@ -392,7 +447,7 @@ function MainPage() {
   const calendarDates = Array.from({ length: 35 }, (_, index) => index);
 
   const latestNews = useMemo(
-    () => mainData.news.slice(0, 4),
+    () => mainData.news.slice(0, 6),
     [mainData.news]
   );
   const activeNewsTabInfo = useMemo(
@@ -552,21 +607,13 @@ function MainPage() {
     navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
-  const loadContentCategory = useCallback(async (category: ContentCategory) => {
-    setActiveContentCategory(category.label);
-
-    if (category.type === 'webtoon') {
-      setContentItems([]);
-      setMainErrors((prev) => ({ ...prev, content: '' }));
-      return;
-    }
-
+  const loadContentImages = useCallback(async (keyword: string) => {
     try {
       setContentLoading(true);
       setMainErrors((prev) => ({ ...prev, content: '' }));
 
       const imageResult = await searchImage(
-        category.keyword,
+        keyword,
         1,
         CONTENT_IMAGE_PREVIEW_LIMIT,
         'sim'
@@ -592,6 +639,21 @@ function MainPage() {
     }
   }, []);
 
+  const loadContentCategory = useCallback(
+    async (category: ContentCategory) => {
+      setActiveContentCategory(category.label);
+
+      if (category.type === 'webtoon') {
+        setContentItems([]);
+        setMainErrors((prev) => ({ ...prev, content: '' }));
+        return;
+      }
+
+      await loadContentImages(category.keyword);
+    },
+    [loadContentImages]
+  );
+
   useEffect(() => {
     if (
       mainLoading ||
@@ -611,17 +673,16 @@ function MainPage() {
     mainLoading,
   ]);
 
-  const handleNewsTabClick = async (tab: (typeof newsTabs)[number]) => {
+  const loadNewsItems = async (keyword: string) => {
     if (newsLoading || mainLoading) {
       return;
     }
 
     try {
-      setActiveNewsTab(tab.label);
       setNewsLoading(true);
       setMainErrors((prev) => ({ ...prev, news: '' }));
 
-      const newsItems = await fetchMainNews(tab.keyword);
+      const newsItems = await fetchMainNews(keyword);
 
       setMainData((prev) => ({ ...prev, news: newsItems ?? [] }));
     } catch (error) {
@@ -637,6 +698,11 @@ function MainPage() {
     } finally {
       setNewsLoading(false);
     }
+  };
+
+  const handleNewsTabClick = async (tab: (typeof newsTabs)[number]) => {
+    setActiveNewsTab(tab.label);
+    await loadNewsItems(tab.keyword);
   };
 
   const handleShoppingTabClick = async (tab: (typeof shoppingTabs)[number]) => {
@@ -848,6 +914,19 @@ function MainPage() {
                 </button>
               </div>
 
+              <div className="news-topic-row">
+                {activeNewsTabInfo.topics.map((topic) => (
+                  <button
+                    key={topic}
+                    type="button"
+                    disabled={mainLoading || newsLoading}
+                    onClick={() => void loadNewsItems(topic)}
+                  >
+                    {topic}
+                  </button>
+                ))}
+              </div>
+
               {mainLoading || newsLoading ? (
                 <p className="empty-message">뉴스를 불러오는 중입니다.</p>
               ) : getMainSectionError(mainErrors.news) ? (
@@ -857,7 +936,7 @@ function MainPage() {
               ) : latestNews.length === 0 ? (
                 <p className="empty-message">표시할 뉴스가 없습니다.</p>
               ) : (
-                <div className="news-grid">
+                <div className={`news-grid news-grid-${activeNewsTabInfo.layout}`}>
                   {latestNews.map((news) => (
                     <article
                       key={news.link}
@@ -959,19 +1038,19 @@ function MainPage() {
                   </div>
 
                   <div className="shopping-theme-buttons">
-                    {shoppingThemes.map((theme) => (
+                    {activeShoppingTabInfo.themes.map((theme) => (
                       <button
-                        key={theme.keyword}
+                        key={theme}
                         type="button"
                         disabled={mainLoading || shoppingLoading}
                         className={
-                          activeShoppingTheme === theme.keyword ? 'is-active' : ''
+                          activeShoppingTheme === theme ? 'is-active' : ''
                         }
                         onClick={() =>
-                          void handleShoppingThemeClick(theme.keyword)
+                          void handleShoppingThemeClick(theme)
                         }
                       >
-                        {theme.label}
+                        {theme}
                       </button>
                     ))}
                   </div>
@@ -1126,6 +1205,58 @@ function MainPage() {
                               />
                             </div>
                           )}
+                          <h4>{cleanText(item.title)}</h4>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
+              ) : activeContentCategoryInfo.topics.length > 0 ? (
+                <>
+                  <div className="content-topic-row">
+                    {activeContentCategoryInfo.topics.map((topic) => (
+                      <button
+                        key={topic}
+                        type="button"
+                        disabled={mainLoading || contentLoading}
+                        onClick={() => void loadContentImages(topic)}
+                      >
+                        {topic}
+                      </button>
+                    ))}
+                  </div>
+
+                  {contentLoading ? (
+                    <p className="empty-message">콘텐츠를 불러오는 중입니다.</p>
+                  ) : getMainSectionError(mainErrors.content) ? (
+                    <p className="empty-message">
+                      {getMainSectionError(mainErrors.content)}
+                    </p>
+                  ) : contentItems.length === 0 ? (
+                    <p className="empty-message">표시할 콘텐츠가 없습니다.</p>
+                  ) : (
+                    <div className="content-image-grid">
+                      {contentItems.map((item) => (
+                        <article
+                          key={`${item.link}-${item.thumbnail}`}
+                          className="content-image-card"
+                          onClick={() => handleOpenExternalLink(item.link)}
+                          onKeyDown={(event) =>
+                            handleCardKeyDown(event, () =>
+                              handleOpenExternalLink(item.link)
+                            )
+                          }
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <div className="content-image-thumbnail">
+                            <img
+                              src={item.thumbnail}
+                              alt=""
+                              loading="lazy"
+                              onError={handlePreviewImageError}
+                            />
+                          </div>
                           <h4>{cleanText(item.title)}</h4>
                         </article>
                       ))}

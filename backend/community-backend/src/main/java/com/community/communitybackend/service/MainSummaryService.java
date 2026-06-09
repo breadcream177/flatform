@@ -37,9 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class MainSummaryService {
 
     private static final int POST_PREVIEW_LIMIT = 6;
-    private static final int NEWS_PREVIEW_LIMIT = 4;
-    private static final int SHOPPING_PREVIEW_LIMIT = 8;
-    private static final int WEBTOON_PREVIEW_LIMIT = 8;
+    private static final int NEWS_PREVIEW_LIMIT = 6;
+    private static final int SHOPPING_PREVIEW_LIMIT = 10;
+    private static final int WEBTOON_PREVIEW_LIMIT = 12;
     private static final int NEWS_IMAGE_FETCH_TIMEOUT_MS = 1200;
     private static final int NEWS_IMAGE_HTML_LIMIT_BYTES = 120_000;
     private static final int EXTERNAL_API_FETCH_TIMEOUT_MS = 2500;

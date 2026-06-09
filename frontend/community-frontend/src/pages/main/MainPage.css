@@ -427,6 +427,38 @@
   text-decoration: underline;
 }
 
+.news-topic-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: #fafbf9;
+  border: 1px solid #edf1ee;
+}
+
+.news-topic-row button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--text-body);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.news-topic-row button:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.news-topic-row button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
 .news-highlight-label {
   flex-shrink: 0;
   font-size: 13px;
@@ -452,6 +484,21 @@
   gap: 20px 26px;
 }
 
+.news-grid-list,
+.news-grid-compact {
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.news-grid-media {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.news-grid-press {
+  gap: 18px 24px;
+}
+
 .news-item-card {
   display: grid;
   grid-template-columns: 124px minmax(0, 1fr);
@@ -463,6 +510,20 @@
   border-radius: 0;
   background: #ffffff;
   outline: none;
+}
+
+.news-grid-list .news-item-card,
+.news-grid-compact .news-item-card {
+  grid-template-columns: 148px minmax(0, 1fr);
+  min-height: 104px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.news-grid-media .news-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .news-item-card.has-thumbnail {
@@ -486,6 +547,15 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
   background: linear-gradient(135deg, #dfe9e2 0%, #eef5f0 100%);
+}
+
+.news-grid-list .news-thumbnail,
+.news-grid-compact .news-thumbnail {
+  width: 148px;
+}
+
+.news-grid-media .news-thumbnail {
+  width: 100%;
 }
 
 .news-thumbnail img {
@@ -596,6 +666,10 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--text-title);
+}
+
+.news-grid-compact .news-item-content p {
+  display: none;
 }
 
 .shopping-section-card {
@@ -835,6 +909,16 @@
   border: 1px solid #edf1ee;
 }
 
+.content-topic-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: #f7f8f7;
+  border: 1px solid #edf1ee;
+}
+
 .webtoon-theme-bar button {
   border: none;
   background: transparent;
@@ -846,9 +930,30 @@
   font-family: inherit;
 }
 
+.content-topic-row button {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-body);
+  cursor: pointer;
+  font-family: inherit;
+}
+
 .webtoon-theme-bar button:hover {
   color: var(--primary);
   text-decoration: underline;
+}
+
+.content-topic-row button:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.content-topic-row button:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
 .webtoon-grid {
@@ -1213,7 +1318,9 @@
 .news-source-strip-link:focus-visible,
 .shopping-product-card:focus-visible,
 .community-keyword-list button:focus-visible,
+.news-topic-row button:focus-visible,
 .webtoon-theme-bar button:focus-visible,
+.content-topic-row button:focus-visible,
 .webtoon-card:focus-visible,
 .content-image-card:focus-visible {
   outline: 2px solid var(--primary);
