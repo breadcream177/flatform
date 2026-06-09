@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type KeyboardEvent } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type KeyboardEvent,
+  type SyntheticEvent,
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   fetchMainNews,
@@ -75,22 +82,87 @@ const shoppingThemes = [
   { label: '자격증 교재', keyword: '자격증 교재' },
 ];
 const newsTabs = [
-  { label: '뉴스스탠드', keyword: '취업 실무', subLabel: '전체언론사' },
-  { label: '언론사편집', keyword: '언론사 주요 뉴스', subLabel: '분야별 뉴스' },
-  { label: '엔터', keyword: '엔터 뉴스', subLabel: '드라마 · 영화 · 뮤직' },
-  { label: '스포츠', keyword: '스포츠 뉴스', subLabel: '월드컵 · 야구 · 축구' },
-  { label: 'LIVE', keyword: '라이브 뉴스', subLabel: '실시간 이슈', live: true },
-  { label: '게임', keyword: '게임 뉴스', subLabel: '게임라운지 · e스포츠' },
-  { label: '경제', keyword: '경제 뉴스', subLabel: '증시 · 산업 · 금융' },
-  { label: '쇼핑투데이', keyword: '쇼핑 뉴스', subLabel: '쇼핑 트렌드' },
+  {
+    label: '뉴스스탠드',
+    keyword: '취업 실무',
+    subLabel: '전체언론사',
+    homeUrl: 'https://news.naver.com',
+  },
+  {
+    label: '언론사편집',
+    keyword: '언론사 주요 뉴스',
+    subLabel: '분야별 뉴스',
+    homeUrl: 'https://news.naver.com/main/list.naver?mode=LPOD&mid=sec',
+  },
+  {
+    label: '엔터',
+    keyword: '엔터 뉴스',
+    subLabel: '드라마 · 영화 · 뮤직',
+    homeUrl: 'https://entertain.naver.com',
+  },
+  {
+    label: '스포츠',
+    keyword: '스포츠 뉴스',
+    subLabel: '월드컵 · 야구 · 축구',
+    homeUrl: 'https://sports.news.naver.com',
+  },
+  {
+    label: 'LIVE',
+    keyword: '라이브 뉴스',
+    subLabel: '실시간 이슈',
+    homeUrl: 'https://news.naver.com',
+    live: true,
+  },
+  {
+    label: '게임',
+    keyword: '게임 뉴스',
+    subLabel: '게임라운지 · e스포츠',
+    homeUrl: 'https://game.naver.com',
+  },
+  {
+    label: '경제',
+    keyword: '경제 뉴스',
+    subLabel: '증시 · 산업 · 금융',
+    homeUrl: 'https://finance.naver.com/news',
+  },
+  {
+    label: '쇼핑투데이',
+    keyword: '쇼핑 뉴스',
+    subLabel: '쇼핑 트렌드',
+    homeUrl: 'https://shopping.naver.com',
+  },
 ];
 const shoppingTabs = [
-  { label: '쇼핑', keyword: '쇼핑' },
-  { label: '맨즈', keyword: '남성 패션' },
-  { label: '브랜드샵', keyword: '브랜드 상품' },
-  { label: 'MY추천', keyword: '취업 준비 아이템' },
-  { label: '추천핫딜', keyword: '핫딜 상품' },
-  { label: '쇼핑라이브', keyword: '쇼핑 라이브' },
+  {
+    label: '쇼핑',
+    keyword: '쇼핑',
+    benefit: '실제 네이버 쇼핑 결과를 기준으로 상품을 보여줍니다.',
+  },
+  {
+    label: '맨즈',
+    keyword: '남성 패션',
+    benefit: '남성 패션과 출근룩 중심의 상품 결과입니다.',
+  },
+  {
+    label: '브랜드샵',
+    keyword: '브랜드 상품',
+    benefit: '브랜드 상품과 공식몰 성격의 결과를 우선 확인합니다.',
+  },
+  {
+    label: 'MY추천',
+    keyword: '취업 준비 아이템',
+    benefit: 'Between Jobs 흐름에 맞춘 취업 준비용 추천 결과입니다.',
+  },
+  {
+    label: '추천핫딜',
+    keyword: '핫딜 상품',
+    benefit: '가격 메리트가 있는 상품 키워드로 다시 조회합니다.',
+  },
+  {
+    label: '쇼핑라이브',
+    keyword: '쇼핑 라이브',
+    benefit: '라이브 쇼핑과 실시간 판매 키워드 중심 결과입니다.',
+  },
 ];
 const shoppingMallLinks = [
   { label: '쿠팡', keyword: '쿠팡 취업 준비' },
@@ -287,6 +359,9 @@ function MainPage() {
   const [contentLoading, setContentLoading] = useState(false);
   const [contentItems, setContentItems] = useState<NaverImageSearchItem[]>([]);
   const [activeNewsTab, setActiveNewsTab] = useState(newsTabs[0].label);
+  const [activeShoppingTab, setActiveShoppingTab] = useState(
+    shoppingTabs[3].label
+  );
   const [activeShoppingTheme, setActiveShoppingTheme] = useState(
     shoppingThemes[0].keyword
   );
@@ -323,6 +398,12 @@ function MainPage() {
   const activeNewsTabInfo = useMemo(
     () => newsTabs.find((tab) => tab.label === activeNewsTab) ?? newsTabs[0],
     [activeNewsTab]
+  );
+  const activeShoppingTabInfo = useMemo(
+    () =>
+      shoppingTabs.find((tab) => tab.label === activeShoppingTab) ??
+      shoppingTabs[0],
+    [activeShoppingTab]
   );
   const activeContentCategoryInfo = useMemo(
     () =>
@@ -558,6 +639,15 @@ function MainPage() {
     }
   };
 
+  const handleShoppingTabClick = async (tab: (typeof shoppingTabs)[number]) => {
+    if (shoppingLoading || mainLoading) {
+      return;
+    }
+
+    setActiveShoppingTab(tab.label);
+    await handleShoppingThemeClick(tab.keyword);
+  };
+
   const handleShoppingThemeClick = async (keyword: string) => {
     if (shoppingLoading || mainLoading) {
       return;
@@ -651,6 +741,10 @@ function MainPage() {
     }
   };
 
+  const handlePreviewImageError = (event: SyntheticEvent<HTMLImageElement>) => {
+    event.currentTarget.parentElement?.classList.add('is-image-hidden');
+  };
+
   const getMainSectionError = (sectionError: string) =>
     sectionError || mainErrors.summary;
 
@@ -711,7 +805,7 @@ function MainPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    handleOpenExternalLink('https://news.naver.com')
+                    handleOpenExternalLink(activeNewsTabInfo.homeUrl)
                   }
                 >
                   {activeNewsTabInfo.subLabel} ▾
@@ -745,10 +839,12 @@ function MainPage() {
                   type="button"
                   className="header-text-button"
                   onClick={() =>
-                    handleOpenExternalLink('https://news.naver.com')
+                    handleOpenExternalLink(activeNewsTabInfo.homeUrl)
                   }
                 >
-                  뉴스홈
+                  {activeNewsTabInfo.label === '뉴스스탠드'
+                    ? '뉴스홈'
+                    : `${activeNewsTabInfo.label}홈`}
                 </button>
               </div>
 
@@ -779,7 +875,12 @@ function MainPage() {
                             handleOpenExternalLink(getNewsTargetLink(news))
                           }
                         >
-                          <img src={news.imageUrl} alt="" loading="lazy" />
+                          <img
+                            src={news.imageUrl}
+                            alt=""
+                            loading="lazy"
+                            onError={handlePreviewImageError}
+                          />
                         </button>
                       )}
                       <div className="news-item-content">
@@ -823,9 +924,9 @@ function MainPage() {
                       type="button"
                       disabled={mainLoading || shoppingLoading}
                       className={
-                        activeShoppingTheme === tab.keyword ? 'is-active' : ''
+                        activeShoppingTab === tab.label ? 'is-active' : ''
                       }
-                      onClick={() => void handleShoppingThemeClick(tab.keyword)}
+                      onClick={() => void handleShoppingTabClick(tab)}
                     >
                       {tab.label}
                     </button>
@@ -902,7 +1003,12 @@ function MainPage() {
                         >
                           {item.imageUrl && (
                             <div className="shopping-product-thumbnail">
-                              <img src={item.imageUrl} alt="" loading="lazy" />
+                              <img
+                                src={item.imageUrl}
+                                alt=""
+                                loading="lazy"
+                                onError={handlePreviewImageError}
+                              />
                             </div>
                           )}
                           <div className="shopping-product-text">
@@ -919,9 +1025,7 @@ function MainPage() {
 
                   <div className="shopping-benefit-strip">
                     <strong>오늘의 선택</strong>
-                    <span>
-                      테마 버튼을 누르면 실제 네이버 쇼핑 결과를 다시 불러옵니다.
-                    </span>
+                    <span>{activeShoppingTabInfo.benefit}</span>
                   </div>
                 </div>
               </div>
@@ -1014,7 +1118,12 @@ function MainPage() {
                         >
                           {item.imageUrl && (
                             <div className="webtoon-thumbnail">
-                              <img src={item.imageUrl} alt="" loading="lazy" />
+                              <img
+                                src={item.imageUrl}
+                                alt=""
+                                loading="lazy"
+                                onError={handlePreviewImageError}
+                              />
                             </div>
                           )}
                           <h4>{cleanText(item.title)}</h4>
@@ -1047,7 +1156,12 @@ function MainPage() {
                       tabIndex={0}
                     >
                       <div className="content-image-thumbnail">
-                        <img src={item.thumbnail} alt="" loading="lazy" />
+                        <img
+                          src={item.thumbnail}
+                          alt=""
+                          loading="lazy"
+                          onError={handlePreviewImageError}
+                        />
                       </div>
                       <h4>{cleanText(item.title)}</h4>
                     </article>

@@ -38,12 +38,12 @@
 }
 
 .portal-main-inner {
-  width: min(100%, 1380px);
+  width: min(100%, 1320px);
   margin: 0 auto;
-  padding: 0 44px;
+  padding: 0 52px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 430px;
-  gap: 30px;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  gap: 28px;
   box-sizing: border-box;
   background: #ffffff;
 }
@@ -92,7 +92,7 @@
 }
 
 .side-card {
-  padding: 26px 28px;
+  padding: 22px 24px;
 }
 
 .hero-badge {
@@ -495,6 +495,17 @@
   object-fit: cover;
 }
 
+.news-thumbnail.is-image-hidden,
+.shopping-product-thumbnail.is-image-hidden,
+.webtoon-thumbnail.is-image-hidden,
+.content-image-thumbnail.is-image-hidden {
+  display: none;
+}
+
+.news-item-card:has(.news-thumbnail.is-image-hidden) {
+  grid-template-columns: 1fr;
+}
+
 .news-item-content {
   min-width: 0;
   display: flex;
@@ -590,8 +601,8 @@
 .shopping-section-card {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  padding: 24px 30px;
+  gap: 20px;
+  padding: 24px 26px;
 }
 
 .shopping-top-row {
@@ -607,17 +618,17 @@
 
 .shopping-content-layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 26px;
+  grid-template-columns: 208px minmax(0, 1fr);
+  gap: 24px;
   align-items: start;
 }
 
 .shopping-side-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   min-height: 100%;
-  padding: 22px 20px;
+  padding: 22px 18px;
   border-radius: var(--radius-lg);
   background: #f7f8f7;
 }
@@ -625,13 +636,13 @@
 .shopping-mall-panel {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 18px;
+  gap: 12px 14px;
 }
 
 .shopping-theme-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 16px;
+  gap: 12px 14px;
   padding-top: 18px;
   border-top: 1px solid #e4ebe6;
 }
@@ -640,7 +651,7 @@
   border: none;
   background: transparent;
   padding: 0;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.35;
   font-weight: 700;
   color: var(--text-body);
@@ -671,7 +682,7 @@
 .shopping-product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 26px 22px;
+  gap: 24px 18px;
 }
 
 .shopping-product-card {
@@ -723,7 +734,7 @@
 
 .shopping-product-text h4 {
   margin: 0;
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.38;
   font-weight: 800;
   color: var(--text-title);
@@ -748,7 +759,7 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  padding: 14px 18px;
+  padding: 13px 16px;
   border-radius: var(--radius-md);
   background: #f7f8f7;
   color: var(--text-body);
@@ -915,7 +926,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid #edf1ee;
   border-radius: var(--radius-md);
   background: #fcfdfc;
@@ -944,7 +955,7 @@
 }
 
 .calendar-widget-date strong {
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
   color: var(--text-title);
 }
@@ -1021,12 +1032,12 @@
 .weather-main {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
 }
 
 .weather-icon {
-  width: 74px;
-  height: 74px;
+  width: 66px;
+  height: 66px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -1044,14 +1055,14 @@
 }
 
 .weather-summary strong {
-  font-size: 40px;
+  font-size: 36px;
   line-height: 1;
   color: var(--text-title);
 }
 
 .weather-summary p {
   margin: 0;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: var(--text-title);
 }
@@ -1213,7 +1224,7 @@
   .portal-main-inner {
     width: min(100%, 1240px);
     padding: 0 24px;
-    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-columns: minmax(0, 1fr) 360px;
     gap: 20px;
   }
 }
@@ -1221,7 +1232,7 @@
 @media (max-width: 1200px) {
 
   .portal-main-inner {
-    grid-template-columns: minmax(0, 1fr) 360px;
+    grid-template-columns: minmax(0, 1fr) 340px;
     gap: 16px;
   }
 
