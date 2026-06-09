@@ -38,12 +38,12 @@
 }
 
 .portal-main-inner {
-  width: min(100%, 1440px);
+  width: min(100%, 1380px);
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 0 44px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 410px;
-  gap: 26px;
+  grid-template-columns: minmax(0, 1fr) 430px;
+  gap: 30px;
   box-sizing: border-box;
   background: #ffffff;
 }
@@ -88,11 +88,11 @@
 }
 
 .content-card {
-  padding: 20px 22px;
+  padding: 20px 24px;
 }
 
 .side-card {
-  padding: 24px 26px;
+  padding: 26px 28px;
 }
 
 .hero-badge {
@@ -473,6 +473,10 @@
   display: block;
 }
 
+.news-item-card:not(.has-thumbnail) .news-item-content {
+  padding: 2px 0;
+}
+
 .news-thumbnail {
   border: 1px solid #edf1ee;
   padding: 0;
@@ -587,7 +591,7 @@
   display: flex;
   flex-direction: column;
   gap: 22px;
-  padding: 24px 28px;
+  padding: 24px 30px;
 }
 
 .shopping-top-row {
@@ -603,8 +607,8 @@
 
 .shopping-content-layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 26px;
   align-items: start;
 }
 
@@ -613,7 +617,7 @@
   flex-direction: column;
   gap: 20px;
   min-height: 100%;
-  padding: 20px 18px;
+  padding: 22px 20px;
   border-radius: var(--radius-lg);
   background: #f7f8f7;
 }
@@ -667,7 +671,7 @@
 .shopping-product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 24px 20px;
+  gap: 26px 22px;
 }
 
 .shopping-product-card {
@@ -839,13 +843,13 @@
 .webtoon-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 22px 18px;
+  gap: 24px 20px;
 }
 
 .content-image-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 22px 18px;
+  gap: 24px 20px;
 }
 
 .webtoon-card,
@@ -1021,8 +1025,8 @@
 }
 
 .weather-icon {
-  width: 66px;
-  height: 66px;
+  width: 74px;
+  height: 74px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -1040,7 +1044,7 @@
 }
 
 .weather-summary strong {
-  font-size: 36px;
+  font-size: 40px;
   line-height: 1;
   color: var(--text-title);
 }
@@ -1209,7 +1213,7 @@
   .portal-main-inner {
     width: min(100%, 1240px);
     padding: 0 24px;
-    grid-template-columns: minmax(0, 1fr) 370px;
+    grid-template-columns: minmax(0, 1fr) 380px;
     gap: 20px;
   }
 }
@@ -1217,7 +1221,7 @@
 @media (max-width: 1200px) {
 
   .portal-main-inner {
-    grid-template-columns: minmax(0, 1fr) 340px;
+    grid-template-columns: minmax(0, 1fr) 360px;
     gap: 16px;
   }
 

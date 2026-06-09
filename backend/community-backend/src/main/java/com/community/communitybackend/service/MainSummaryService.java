@@ -46,14 +46,14 @@ public class MainSummaryService {
     private static final int EXTERNAL_API_RESPONSE_LIMIT_BYTES = 200_000;
     private static final String NEWS_KEYWORD = "취업 실무";
     private static final String SHOPPING_KEYWORD = "취업 준비 아이템";
-    private static final String WEATHER_LOCATION = "서울";
+    private static final String WEATHER_LOCATION = "순천";
     private static final String NAVER_WEBTOON_WEEKDAY_API_URL =
             "https://comic.naver.com/api/webtoon/titlelist/weekday?week=";
     private static final String NAVER_WEBTOON_LIST_URL =
             "https://comic.naver.com/webtoon/list?titleId=";
     private static final String WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast"
-            + "?latitude=37.5665"
-            + "&longitude=126.9780"
+            + "?latitude=34.9506"
+            + "&longitude=127.4872"
             + "&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m"
             + "&daily=temperature_2m_max,temperature_2m_min"
             + "&timezone=Asia%2FSeoul"

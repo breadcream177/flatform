@@ -126,6 +126,8 @@ const contentCategories = [
 
 type ContentCategory = (typeof contentCategories)[number];
 
+const CONTENT_IMAGE_PREVIEW_LIMIT = 12;
+
 function cleanText(text?: string) {
   return (text ?? '')
     .replace(/<[^>]*>/g, '')
@@ -288,7 +290,9 @@ function MainPage() {
   const [activeShoppingTheme, setActiveShoppingTheme] = useState(
     shoppingThemes[0].keyword
   );
-  const [activeContentCategory, setActiveContentCategory] = useState('웹툰');
+  const [activeContentCategory, setActiveContentCategory] = useState(
+    contentCategories[0].label
+  );
   const [activeWebtoonWeek, setActiveWebtoonWeek] = useState(() => {
     const todayIndex = new Date().getDay();
     const weekMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -467,6 +471,65 @@ function MainPage() {
     navigate(`/search?keyword=${encodeURIComponent(keyword)}`);
   };
 
+  const loadContentCategory = useCallback(async (category: ContentCategory) => {
+    setActiveContentCategory(category.label);
+
+    if (category.type === 'webtoon') {
+      setContentItems([]);
+      setMainErrors((prev) => ({ ...prev, content: '' }));
+      return;
+    }
+
+    try {
+      setContentLoading(true);
+      setMainErrors((prev) => ({ ...prev, content: '' }));
+
+      const imageResult = await searchImage(
+        category.keyword,
+        1,
+        CONTENT_IMAGE_PREVIEW_LIMIT,
+        'sim'
+      );
+
+      setContentItems(
+        (imageResult.items ?? [])
+          .filter((item) => item.link && item.thumbnail)
+          .slice(0, CONTENT_IMAGE_PREVIEW_LIMIT)
+      );
+    } catch (error) {
+      console.error('콘텐츠 카테고리 조회 실패:', error);
+      setContentItems([]);
+      setMainErrors((prev) => ({
+        ...prev,
+        content:
+          error instanceof Error
+            ? error.message
+            : '콘텐츠 정보를 불러오지 못했습니다.',
+      }));
+    } finally {
+      setContentLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (
+      mainLoading ||
+      activeContentCategory !== contentCategories[0].label ||
+      contentItems.length > 0 ||
+      mainErrors.content
+    ) {
+      return;
+    }
+
+    void loadContentCategory(contentCategories[0]);
+  }, [
+    activeContentCategory,
+    contentItems.length,
+    loadContentCategory,
+    mainErrors.content,
+    mainLoading,
+  ]);
+
   const handleNewsTabClick = async (tab: (typeof newsTabs)[number]) => {
     if (newsLoading || mainLoading) {
       return;
@@ -556,35 +619,7 @@ function MainPage() {
       return;
     }
 
-    setActiveContentCategory(category.label);
-
-    if (category.type === 'webtoon') {
-      setMainErrors((prev) => ({ ...prev, content: '' }));
-      return;
-    }
-
-    try {
-      setContentLoading(true);
-      setMainErrors((prev) => ({ ...prev, content: '' }));
-
-      const imageResult = await searchImage(category.keyword, 1, 8, 'sim');
-
-      setContentItems(
-        (imageResult.items ?? []).filter((item) => item.link && item.thumbnail)
-      );
-    } catch (error) {
-      console.error('콘텐츠 카테고리 조회 실패:', error);
-      setContentItems([]);
-      setMainErrors((prev) => ({
-        ...prev,
-        content:
-          error instanceof Error
-            ? error.message
-            : '콘텐츠 정보를 불러오지 못했습니다.',
-      }));
-    } finally {
-      setContentLoading(false);
-    }
+    await loadContentCategory(category);
   };
 
   const handleContentHomeClick = () => {
@@ -995,9 +1030,7 @@ function MainPage() {
                   {getMainSectionError(mainErrors.content)}
                 </p>
               ) : contentItems.length === 0 ? (
-                <p className="empty-message">
-                  카테고리를 선택하면 실제 이미지 검색 결과가 표시됩니다.
-                </p>
+                <p className="empty-message">표시할 콘텐츠가 없습니다.</p>
               ) : (
                 <div className="content-image-grid">
                   {contentItems.map((item) => (
@@ -1162,7 +1195,7 @@ function MainPage() {
                 <>
                   <div className="weather-main">
                     <div className="weather-icon" aria-hidden="true">
-                      {mainData.weather.weatherText === '맑음' ? '맑음' : '날씨'}
+                      {mainData.weather.weatherText}
                     </div>
 
                     <div className="weather-summary">
