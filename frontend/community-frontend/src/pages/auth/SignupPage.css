@@ -18,6 +18,8 @@
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 18px;
+  min-height: 40px;
+  padding: 0;
 }
 
 .signup-card {
@@ -162,12 +164,14 @@
   gap: 10px;
   font-size: 14px;
   color: #333;
+  min-height: 36px;
 }
 
 .signup-check-row input[type='checkbox'] {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   accent-color: #03c75a;
+  flex-shrink: 0;
 }
 
 .signup-submit-button {
@@ -206,20 +210,27 @@
   color: #666;
   cursor: pointer;
   font-size: 13px;
+  min-height: 36px;
+  padding: 0 4px;
 }
 
 @media (max-width: 600px) {
   .signup-page {
-    padding: 16px 12px 34px;
+    padding: 18px 14px 96px;
   }
 
   .signup-container {
     max-width: 100%;
   }
 
+  .signup-back-button {
+    min-height: 44px;
+    margin-bottom: 10px;
+  }
+
   .signup-card {
-    padding: 22px 16px;
-    border-radius: 16px;
+    padding: 24px 18px;
+    border-radius: 22px;
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
   }
 
@@ -241,11 +252,12 @@
 
   .signup-input,
   .signup-submit-button {
-    height: 50px;
+    height: 52px;
+    font-size: 16px;
   }
 
   .signup-helper-text {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .signup-input-row {
@@ -254,5 +266,11 @@
 
   .signup-inline-button {
     width: 100%;
+    height: 52px;
+  }
+
+  .signup-bottom-row button {
+    min-height: 40px;
+    font-size: 13px;
   }
 }

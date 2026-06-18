@@ -18,6 +18,8 @@
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 18px;
+  min-height: 40px;
+  padding: 0;
 }
 
 .account-recovery-card {
@@ -131,6 +133,7 @@
   font-weight: 700;
   cursor: pointer;
   font-family: inherit;
+  min-height: 36px;
 }
 
 .account-recovery-message.success {
@@ -159,11 +162,13 @@
   cursor: pointer;
   font-size: 13px;
   font-family: inherit;
+  min-height: 36px;
+  padding: 0 4px;
 }
 
 @media (max-width: 600px) {
   .account-recovery-page {
-    padding: 16px 12px 34px;
+    padding: 18px 14px 96px;
   }
 
   .account-recovery-container {
@@ -171,9 +176,14 @@
   }
 
   .account-recovery-card {
-    padding: 22px 16px;
-    border-radius: 16px;
+    padding: 24px 18px;
+    border-radius: 22px;
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  .account-recovery-back-button {
+    min-height: 44px;
+    margin-bottom: 10px;
   }
 
   .account-recovery-header {
@@ -191,7 +201,8 @@
 
   .account-recovery-input,
   .account-recovery-submit {
-    height: 50px;
+    height: 52px;
+    font-size: 16px;
   }
 
   .account-recovery-bottom-row {
@@ -201,6 +212,13 @@
   }
 
   .account-recovery-bottom-row button {
-    font-size: 12px;
+    min-height: 40px;
+    font-size: 13px;
+    padding: 0 6px;
+  }
+
+  .account-recovery-message button {
+    min-height: 40px;
+    padding: 8px 14px;
   }
 }
