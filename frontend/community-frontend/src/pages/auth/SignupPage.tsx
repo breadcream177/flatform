@@ -45,6 +45,11 @@ function SignupPage() {
       return;
     }
 
+    if (password.length < 6) {
+      setError('비밀번호는 6자 이상 입력해주세요.');
+      return;
+    }
+
     if (!nickname) {
       setError('닉네임을 입력해주세요.');
       return;
@@ -106,6 +111,8 @@ function SignupPage() {
                 placeholder="아이디를 입력하세요"
                 value={form.username}
                 onChange={(e) => handleChange('username', e.target.value)}
+                autoComplete="username"
+                required
               />
             </div>
 
@@ -120,9 +127,11 @@ function SignupPage() {
                 placeholder="이메일을 입력하세요"
                 value={form.email}
                 onChange={(e) => handleChange('email', e.target.value)}
+                autoComplete="email"
+                required
               />
               <p className="signup-helper-text">
-                현재는 인증 없이 가입에 사용하는 이메일 정보입니다.
+                아이디 찾기와 비밀번호 재설정 메일을 받을 주소입니다.
               </p>
             </div>
 
@@ -134,10 +143,16 @@ function SignupPage() {
                 id="signup-password"
                 type="password"
                 className="signup-input"
-                placeholder="비밀번호를 입력하세요"
+                placeholder="6자 이상 입력하세요"
                 value={form.password}
                 onChange={(e) => handleChange('password', e.target.value)}
+                autoComplete="new-password"
+                minLength={6}
+                required
               />
+              <p className="signup-helper-text">
+                비밀번호 찾기 기능과 동일하게 6자 이상으로 저장됩니다.
+              </p>
             </div>
 
             <div className="signup-field-group">
@@ -151,6 +166,8 @@ function SignupPage() {
                 placeholder="닉네임을 입력하세요"
                 value={form.nickname}
                 onChange={(e) => handleChange('nickname', e.target.value)}
+                autoComplete="nickname"
+                required
               />
             </div>
 
@@ -165,6 +182,7 @@ function SignupPage() {
                 placeholder="이름을 입력하세요 (선택)"
                 value={form.realName}
                 onChange={(e) => handleChange('realName', e.target.value)}
+                autoComplete="name"
               />
             </div>
 

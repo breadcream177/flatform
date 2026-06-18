@@ -210,16 +210,42 @@
 
 @media (max-width: 600px) {
   .signup-page {
-    padding: 24px 16px 40px;
+    padding: 16px 12px 34px;
+  }
+
+  .signup-container {
+    max-width: 100%;
   }
 
   .signup-card {
-    padding: 24px 18px;
+    padding: 22px 16px;
     border-radius: 16px;
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+  }
+
+  .signup-brand-area {
+    margin-bottom: 22px;
+  }
+
+  .signup-form {
+    gap: 14px;
   }
 
   .signup-brand-title {
     font-size: 28px;
+  }
+
+  .signup-brand-subtitle {
+    font-size: 14px;
+  }
+
+  .signup-input,
+  .signup-submit-button {
+    height: 50px;
+  }
+
+  .signup-helper-text {
+    font-size: 11px;
   }
 
   .signup-input-row {

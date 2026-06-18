@@ -7,6 +7,9 @@ import PostDetailPage from './pages/post/PostDetailPage';
 import PostEditPage from './pages/post/PostEditPage';
 import LoginPage from './pages/auth/LoginPage';
 import SignupPage from './pages/auth/SignupPage';
+import FindAccountPage from './pages/auth/FindAccountPage';
+import PasswordResetRequestPage from './pages/auth/PasswordResetRequestPage';
+import PasswordResetConfirmPage from './pages/auth/PasswordResetConfirmPage';
 import MyPage from './pages/user/MyPage';
 import TodoPage from './pages/todo/TodoPage';
 import BlogListPage from './pages/blog/BlogListPage';
@@ -26,6 +29,9 @@ function App() {
         <Route path="/posts/:postId/edit" element={<PostEditPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/find-account" element={<FindAccountPage />} />
+        <Route path="/password-reset/request" element={<PasswordResetRequestPage />} />
+        <Route path="/password-reset" element={<PasswordResetConfirmPage />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/todos" element={<TodoPage />} />
         <Route path="/blog" element={<BlogListPage />} />

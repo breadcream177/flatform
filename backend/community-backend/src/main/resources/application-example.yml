@@ -8,6 +8,22 @@ spring:
     password: ${DB_PASSWORD:}
     driver-class-name: org.mariadb.jdbc.Driver
 
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${MAIL_SMTP_STARTTLS_ENABLE:true}
+
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE:always}
+
   jpa:
     hibernate:
       ddl-auto: ${JPA_DDL_AUTO:none}

@@ -99,6 +99,8 @@ function LoginPage() {
                 placeholder="아이디를 입력하세요."
                 value={loginId}
                 onChange={(event) => setLoginId(event.target.value)}
+                autoComplete="username"
+                required
               />
             </label>
 
@@ -110,6 +112,8 @@ function LoginPage() {
                 placeholder="비밀번호를 입력하세요."
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
               />
             </label>
 
@@ -127,9 +131,16 @@ function LoginPage() {
           </form>
 
           <div className="login-link-row">
-            <button type="button">아이디 찾기</button>
+            <button type="button" onClick={() => navigate('/find-account')}>
+              아이디 찾기
+            </button>
             <span>|</span>
-            <button type="button">비밀번호 찾기</button>
+            <button
+              type="button"
+              onClick={() => navigate('/password-reset/request')}
+            >
+              비밀번호 찾기
+            </button>
             <span>|</span>
             <button type="button" onClick={() => navigate('/signup')}>
               회원가입

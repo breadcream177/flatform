@@ -2,13 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './Layout.css';
 
-type LoginUser = {
-  userId: number;
-  username: string;
-  nickname: string;
-  role: string;
-};
-
 const RECENT_SEARCH_KEY = 'recentSearchKeywords';
 const SEARCH_AUTO_SAVE_KEY = 'searchAutoSaveEnabled';
 
@@ -25,34 +18,22 @@ const DEFAULT_AUTOCOMPLETE_KEYWORDS = [
   '커뮤니티',
 ];
 
+interface LayoutLoginUser {
+  username: string;
+  nickname?: string;
+}
+
 export default function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
   const searchBoxRef = useRef<HTMLDivElement | null>(null);
 
   const [keyword, setKeyword] = useState('');
-  const [loginUser, setLoginUser] = useState<LoginUser | null>(null);
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('loginUser');
-
-    if (!savedUser) {
-      setLoginUser(null);
-      return;
-    }
-
-    try {
-      setLoginUser(JSON.parse(savedUser));
-    } catch (error) {
-      console.error('loginUser 파싱 오류:', error);
-      localStorage.removeItem('loginUser');
-      setLoginUser(null);
-    }
-  }, [location.pathname]);
+  const [loginUser, setLoginUser] = useState<LayoutLoginUser | null>(null);
 
   useEffect(() => {
     const savedKeywords = localStorage.getItem(RECENT_SEARCH_KEY);
@@ -75,11 +56,49 @@ export default function Layout() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const currentKeyword = params.get('keyword') ?? '';
+    const storedUser = localStorage.getItem('loginUser');
 
     if (location.pathname === '/search') {
       setKeyword(currentKeyword);
     }
+
+    if (!storedUser) {
+      setLoginUser(null);
+      return;
+    }
+
+    try {
+      setLoginUser(JSON.parse(storedUser));
+    } catch (error) {
+      console.error('로그인 사용자 정보 확인 오류:', error);
+      setLoginUser(null);
+      localStorage.removeItem('loginUser');
+    }
   }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key !== 'loginUser') return;
+
+      if (!event.newValue) {
+        setLoginUser(null);
+        return;
+      }
+
+      try {
+        setLoginUser(JSON.parse(event.newValue));
+      } catch (error) {
+        console.error('로그인 사용자 정보 갱신 오류:', error);
+        setLoginUser(null);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -226,7 +245,7 @@ export default function Layout() {
     }
   };
 
-  const handleLogout = () => {
+  const handleMobileLogout = () => {
     localStorage.removeItem('loginUser');
     setLoginUser(null);
     navigate('/');
@@ -369,37 +388,6 @@ export default function Layout() {
             </div>
           </div>
 
-          <nav className="layout-nav">
-            <button type="button" onClick={() => navigate('/')}>
-              홈
-            </button>
-
-            <button type="button" onClick={() => navigate('/posts')}>
-              work
-            </button>
-
-            <button type="button" onClick={() => navigate('/blog')}>
-              블로그
-            </button>
-
-            {!loginUser ? (
-              <button type="button" onClick={() => navigate('/login')}>
-                로그인
-              </button>
-            ) : (
-              <div className="layout-user-menu">
-                <span className="layout-user-name">{loginUser.nickname}님</span>
-
-                <button type="button" onClick={() => navigate('/mypage')}>
-                  마이페이지
-                </button>
-
-                <button type="button" onClick={handleLogout}>
-                  로그아웃
-                </button>
-              </div>
-            )}
-          </nav>
         </div>
       </header>
 
@@ -408,6 +396,45 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      <nav className="mobile-bottom-nav" aria-label="모바일 주요 메뉴">
+        <button type="button" onClick={() => navigate('/')}>
+          <span className="mobile-bottom-nav-icon">H</span>
+          홈
+        </button>
+        <button type="button" onClick={() => navigate('/posts')}>
+          <span className="mobile-bottom-nav-icon">W</span>
+          work
+        </button>
+        <button type="button" onClick={() => navigate('/blog')}>
+          <span className="mobile-bottom-nav-icon">B</span>
+          블로그
+        </button>
+
+        {loginUser ? (
+          <>
+            <button type="button" onClick={() => navigate('/mypage')}>
+              <span className="mobile-bottom-nav-icon">M</span>
+              마이
+            </button>
+            <button type="button" onClick={handleMobileLogout}>
+              <span className="mobile-bottom-nav-icon">O</span>
+              로그아웃
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" onClick={() => navigate('/login')}>
+              <span className="mobile-bottom-nav-icon">L</span>
+              로그인
+            </button>
+            <button type="button" onClick={() => navigate('/signup')}>
+              <span className="mobile-bottom-nav-icon">+</span>
+              회원가입
+            </button>
+          </>
+        )}
+      </nav>
     </div>
   );
 }

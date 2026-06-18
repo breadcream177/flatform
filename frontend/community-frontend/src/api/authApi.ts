@@ -27,6 +27,24 @@ export interface UpdateNicknameRequest {
   nickname: string;
 }
 
+export interface AccountRecoveryResponse {
+  message: string;
+}
+
+export interface FindUsernameRequest {
+  email: string;
+}
+
+export interface PasswordResetRequest {
+  username: string;
+  email: string;
+}
+
+export interface PasswordResetConfirmRequest {
+  token: string;
+  newPassword: string;
+}
+
 function validateAuthData(
   data: AuthResponseData,
   defaultMessage: string
@@ -67,6 +85,54 @@ export function signupUser(request: SignupRequest): Promise<unknown> {
       body: JSON.stringify(request),
     },
     '회원가입에 실패했습니다.'
+  );
+}
+
+export function findUsername(
+  request: FindUsernameRequest
+): Promise<AccountRecoveryResponse> {
+  return requestApi<AccountRecoveryResponse>(
+    `${API_BASE_URL}/api/auth/find-username`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    },
+    '아이디 찾기 요청에 실패했습니다.'
+  );
+}
+
+export function requestPasswordReset(
+  request: PasswordResetRequest
+): Promise<AccountRecoveryResponse> {
+  return requestApi<AccountRecoveryResponse>(
+    `${API_BASE_URL}/api/auth/password-reset/request`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    },
+    '비밀번호 재설정 메일 요청에 실패했습니다.'
+  );
+}
+
+export function confirmPasswordReset(
+  request: PasswordResetConfirmRequest
+): Promise<AccountRecoveryResponse> {
+  return requestApi<AccountRecoveryResponse>(
+    `${API_BASE_URL}/api/auth/password-reset/confirm`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(request),
+    },
+    '비밀번호 변경에 실패했습니다.'
   );
 }
 

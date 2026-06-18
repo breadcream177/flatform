@@ -1356,11 +1356,17 @@ function MainPage() {
                     마이페이지
                   </button>
                   <div className="login-sub-links">
-                    <button type="button" onClick={handleMyPageClick}>
-                      회원정보
+                    <button type="button" onClick={() => navigate('/')}>
+                      홈
+                    </button>
+                    <button type="button" onClick={() => navigate('/posts')}>
+                      work
                     </button>
                     <button type="button" onClick={() => navigate('/blog')}>
                       블로그
+                    </button>
+                    <button type="button" onClick={handleMyPageClick}>
+                      회원정보
                     </button>
                     <button type="button" onClick={handleLogout}>
                       로그아웃
@@ -1380,6 +1386,15 @@ function MainPage() {
                     Between Jobs 로그인
                   </button>
                   <div className="login-sub-links">
+                    <button type="button" onClick={() => navigate('/find-account')}>
+                      아이디 찾기
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/password-reset/request')}
+                    >
+                      비밀번호 찾기
+                    </button>
                     <button type="button" onClick={() => navigate('/signup')}>
                       회원가입
                     </button>
