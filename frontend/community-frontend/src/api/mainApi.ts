@@ -88,34 +88,30 @@ export function fetchMainSummary(): Promise<MainSummaryResponse> {
 }
 
 export function fetchMainNews(keyword: string): Promise<MainNewsPreview[]> {
-  const query = encodeURIComponent(keyword);
+  const params = new URLSearchParams({ keyword });
 
   return requestApi<MainNewsPreview[]>(
-    `${MAIN_BASE_URL}/news?keyword=${query}`,
+    `${MAIN_BASE_URL}/news?${params.toString()}`,
     undefined,
     '뉴스 정보를 불러오지 못했습니다.'
   );
 }
 
-export function fetchMainShopping(
-  keyword: string
-): Promise<MainShoppingPreview[]> {
-  const query = encodeURIComponent(keyword);
+export function fetchMainShopping(keyword: string): Promise<MainShoppingPreview[]> {
+  const params = new URLSearchParams({ keyword });
 
   return requestApi<MainShoppingPreview[]>(
-    `${MAIN_BASE_URL}/shopping?keyword=${query}`,
+    `${MAIN_BASE_URL}/shopping?${params.toString()}`,
     undefined,
     '쇼핑 정보를 불러오지 못했습니다.'
   );
 }
 
-export function fetchMainWebtoons(
-  week: string
-): Promise<MainWebtoonPreview[]> {
-  const query = encodeURIComponent(week);
+export function fetchMainWebtoons(week: string): Promise<MainWebtoonPreview[]> {
+  const params = new URLSearchParams({ week });
 
   return requestApi<MainWebtoonPreview[]>(
-    `${MAIN_BASE_URL}/webtoons?week=${query}`,
+    `${MAIN_BASE_URL}/webtoons?${params.toString()}`,
     undefined,
     '웹툰 정보를 불러오지 못했습니다.'
   );

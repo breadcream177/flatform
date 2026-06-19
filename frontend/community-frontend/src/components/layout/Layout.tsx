@@ -6,21 +6,37 @@ const RECENT_SEARCH_KEY = 'recentSearchKeywords';
 const SEARCH_AUTO_SAVE_KEY = 'searchAutoSaveEnabled';
 
 const DEFAULT_AUTOCOMPLETE_KEYWORDS = [
-  '뉴스',
-  '블로그',
-  '웹문서',
-  '맛집',
-  '취업',
+  'IT 신입 개발자',
+  '이력서',
+  '자기소개서',
   '포트폴리오',
-  '자바',
-  '리액트',
-  '스프링부트',
-  '커뮤니티',
+  '면접',
+  '정보처리기사',
+  '컴퓨터활용능력',
+  '청년 일자리',
+  '개발자 노트북',
+  '면접 복장',
 ];
 
 interface LayoutLoginUser {
   username: string;
   nickname?: string;
+}
+
+function readLoginUser() {
+  const storedUser = localStorage.getItem('loginUser');
+
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(storedUser) as LayoutLoginUser;
+  } catch (error) {
+    console.error('로그인 사용자 정보를 읽지 못했습니다.', error);
+    localStorage.removeItem('loginUser');
+    return null;
+  }
 }
 
 export default function Layout() {
@@ -43,7 +59,7 @@ export default function Layout() {
       try {
         setRecentKeywords(JSON.parse(savedKeywords));
       } catch (error) {
-        console.error('최근 검색어 파싱 오류:', error);
+        console.error('최근 검색어를 읽지 못했습니다.', error);
         localStorage.removeItem(RECENT_SEARCH_KEY);
       }
     }
@@ -51,45 +67,25 @@ export default function Layout() {
     if (savedAutoSave !== null) {
       setAutoSaveEnabled(savedAutoSave === 'true');
     }
+
+    setLoginUser(readLoginUser());
   }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const currentKeyword = params.get('keyword') ?? '';
-    const storedUser = localStorage.getItem('loginUser');
 
     if (location.pathname === '/search') {
       setKeyword(currentKeyword);
     }
 
-    if (!storedUser) {
-      setLoginUser(null);
-      return;
-    }
-
-    try {
-      setLoginUser(JSON.parse(storedUser));
-    } catch (error) {
-      console.error('로그인 사용자 정보 확인 오류:', error);
-      setLoginUser(null);
-      localStorage.removeItem('loginUser');
-    }
+    setLoginUser(readLoginUser());
   }, [location.pathname, location.search]);
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key !== 'loginUser') return;
-
-      if (!event.newValue) {
-        setLoginUser(null);
-        return;
-      }
-
-      try {
-        setLoginUser(JSON.parse(event.newValue));
-      } catch (error) {
-        console.error('로그인 사용자 정보 갱신 오류:', error);
-        setLoginUser(null);
+      if (event.key === 'loginUser') {
+        setLoginUser(readLoginUser());
       }
     };
 
@@ -101,11 +97,8 @@ export default function Layout() {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        searchBoxRef.current &&
-        !searchBoxRef.current.contains(e.target as Node)
-      ) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(event.target as Node)) {
         setShowSearchDropdown(false);
         setSelectedIndex(-1);
       }
@@ -122,7 +115,6 @@ export default function Layout() {
     if (!autoSaveEnabled) return [];
 
     const trimmedKeyword = keyword.trim();
-
     const mergedKeywords = Array.from(
       new Set([...recentKeywords, ...DEFAULT_AUTOCOMPLETE_KEYWORDS])
     );
@@ -132,9 +124,7 @@ export default function Layout() {
     }
 
     return mergedKeywords
-      .filter((item) =>
-        item.toLowerCase().includes(trimmedKeyword.toLowerCase())
-      )
+      .filter((item) => item.toLowerCase().includes(trimmedKeyword.toLowerCase()))
       .slice(0, 10);
   }, [keyword, recentKeywords, autoSaveEnabled]);
 
@@ -169,36 +159,28 @@ export default function Layout() {
     navigate(`/search?keyword=${encodeURIComponent(targetKeyword)}`);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showSearchDropdown && e.key !== 'Enter') {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSearchDropdown && event.key !== 'Enter') {
       setShowSearchDropdown(true);
       return;
     }
 
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
       if (autocompleteKeywords.length === 0) return;
-
-      setSelectedIndex((prev) =>
-        prev >= autocompleteKeywords.length - 1 ? 0 : prev + 1
-      );
+      setSelectedIndex((prev) => (prev >= autocompleteKeywords.length - 1 ? 0 : prev + 1));
       return;
     }
 
-    if (e.key === 'ArrowUp') {
-      e.preventDefault();
-
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
       if (autocompleteKeywords.length === 0) return;
-
-      setSelectedIndex((prev) =>
-        prev <= 0 ? autocompleteKeywords.length - 1 : prev - 1
-      );
+      setSelectedIndex((prev) => (prev <= 0 ? autocompleteKeywords.length - 1 : prev - 1));
       return;
     }
 
-    if (e.key === 'Enter') {
-      e.preventDefault();
+    if (event.key === 'Enter') {
+      event.preventDefault();
 
       if (selectedIndex >= 0 && autocompleteKeywords[selectedIndex]) {
         handleSearch(autocompleteKeywords[selectedIndex]);
@@ -209,7 +191,7 @@ export default function Layout() {
       return;
     }
 
-    if (e.key === 'Escape') {
+    if (event.key === 'Escape') {
       setShowSearchDropdown(false);
       setSelectedIndex(-1);
     }
@@ -223,7 +205,6 @@ export default function Layout() {
 
   const handleDeleteRecentKeyword = (targetKeyword: string) => {
     const nextKeywords = recentKeywords.filter((item) => item !== targetKeyword);
-
     setRecentKeywords(nextKeywords);
     localStorage.setItem(RECENT_SEARCH_KEY, JSON.stringify(nextKeywords));
   };
@@ -235,7 +216,6 @@ export default function Layout() {
 
   const handleToggleAutoSave = () => {
     const nextValue = !autoSaveEnabled;
-
     setAutoSaveEnabled(nextValue);
     localStorage.setItem(SEARCH_AUTO_SAVE_KEY, String(nextValue));
 
@@ -255,30 +235,23 @@ export default function Layout() {
     <div className="layout">
       <header className="layout-header">
         <div className="layout-header-inner">
-          <div className="layout-header-left">
-            <Link to="/" className="layout-logo-link">
-              <h1 className="layout-logo">Between Jobs</h1>
-            </Link>
-          </div>
+          <Link to="/" className="layout-logo-link" aria-label="Between Jobs 홈">
+            <h1 className="layout-logo">Between Jobs</h1>
+          </Link>
 
           <div className="layout-search-area">
             <div className="layout-search-box-wrap" ref={searchBoxRef}>
-              <div
-                className={
-                  showSearchDropdown
-                    ? 'layout-search-box active'
-                    : 'layout-search-box'
-                }
-              >
+              <div className={showSearchDropdown ? 'layout-search-box active' : 'layout-search-box'}>
                 <input
                   type="text"
                   value={keyword}
-                  onChange={(e) => {
-                    setKeyword(e.target.value);
+                  onChange={(event) => {
+                    setKeyword(event.target.value);
                     setShowSearchDropdown(true);
                   }}
                   onKeyDown={handleKeyDown}
                   onFocus={() => setShowSearchDropdown(true)}
+                  placeholder="검색어를 입력해주세요"
                 />
 
                 {keyword && (
@@ -286,12 +259,18 @@ export default function Layout() {
                     type="button"
                     className="layout-search-clear-button"
                     onClick={handleClearKeyword}
+                    aria-label="검색어 지우기"
                   >
                     ×
                   </button>
                 )}
 
-                <button type="button" onClick={() => handleSearch()}>
+                <button
+                  type="button"
+                  className="layout-search-submit-button"
+                  onClick={() => handleSearch()}
+                  aria-label="검색"
+                >
                   🔍
                 </button>
               </div>
@@ -299,7 +278,7 @@ export default function Layout() {
               {showSearchDropdown && (
                 <div className="search-dropdown">
                   <div className="search-dropdown-header">
-                    <strong>{keyword.trim() ? '자동완성' : '최근 검색어'}</strong>
+                    <strong>{keyword.trim() ? '추천 검색어' : '최근 검색어'}</strong>
 
                     {recentKeywords.length > 0 && !keyword.trim() && (
                       <button type="button" onClick={handleDeleteAllRecentKeywords}>
@@ -309,13 +288,9 @@ export default function Layout() {
                   </div>
 
                   {!autoSaveEnabled ? (
-                    <div className="search-dropdown-empty">
-                      자동완성이 꺼져 있습니다.
-                    </div>
+                    <div className="search-dropdown-empty">검색어 저장이 꺼져 있습니다.</div>
                   ) : autocompleteKeywords.length === 0 ? (
-                    <div className="search-dropdown-empty">
-                      추천 검색어가 없습니다.
-                    </div>
+                    <div className="search-dropdown-empty">표시할 검색어가 없습니다.</div>
                   ) : (
                     <ul className="recent-search-list">
                       {autocompleteKeywords.map((item, index) => {
@@ -337,7 +312,7 @@ export default function Layout() {
                               onClick={() => handleSearch(item)}
                             >
                               <span className="recent-search-icon">
-                                {isRecentKeyword ? '↺' : '⌕'}
+                                {isRecentKeyword ? '최근' : '추천'}
                               </span>
                               <span>{item}</span>
                             </button>
@@ -358,13 +333,10 @@ export default function Layout() {
                   )}
 
                   <div className="search-dropdown-option">
-                    <span>검색 이력 기반 추천 검색어</span>
-
+                    <span>검색 이력 기반 추천</span>
                     <button
                       type="button"
-                      className={
-                        autoSaveEnabled ? 'search-toggle active' : 'search-toggle'
-                      }
+                      className={autoSaveEnabled ? 'search-toggle active' : 'search-toggle'}
                       onClick={handleToggleAutoSave}
                     >
                       <span />
@@ -375,11 +347,7 @@ export default function Layout() {
                     <button type="button" onClick={handleToggleAutoSave}>
                       {autoSaveEnabled ? '자동저장 끄기' : '자동저장 켜기'}
                     </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setShowSearchDropdown(false)}
-                    >
+                    <button type="button" onClick={() => setShowSearchDropdown(false)}>
                       닫기
                     </button>
                   </div>
@@ -387,7 +355,6 @@ export default function Layout() {
               )}
             </div>
           </div>
-
         </div>
       </header>
 
@@ -399,12 +366,12 @@ export default function Layout() {
 
       <nav className="mobile-bottom-nav" aria-label="모바일 주요 메뉴">
         <button type="button" onClick={() => navigate('/')}>
-          <span className="mobile-bottom-nav-icon">H</span>
+          <span className="mobile-bottom-nav-icon">홈</span>
           홈
         </button>
         <button type="button" onClick={() => navigate('/posts')}>
-          <span className="mobile-bottom-nav-icon">W</span>
-          work
+          <span className="mobile-bottom-nav-icon">글</span>
+          게시글
         </button>
         <button type="button" onClick={() => navigate('/blog')}>
           <span className="mobile-bottom-nav-icon">B</span>
@@ -418,19 +385,19 @@ export default function Layout() {
               마이
             </button>
             <button type="button" onClick={handleMobileLogout}>
-              <span className="mobile-bottom-nav-icon">O</span>
+              <span className="mobile-bottom-nav-icon">OUT</span>
               로그아웃
             </button>
           </>
         ) : (
           <>
             <button type="button" onClick={() => navigate('/login')}>
-              <span className="mobile-bottom-nav-icon">L</span>
+              <span className="mobile-bottom-nav-icon">IN</span>
               로그인
             </button>
             <button type="button" onClick={() => navigate('/signup')}>
               <span className="mobile-bottom-nav-icon">+</span>
-              회원가입
+              가입
             </button>
           </>
         )}
