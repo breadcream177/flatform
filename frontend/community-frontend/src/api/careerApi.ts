@@ -31,7 +31,21 @@ export interface CertificationSite {
   description: string;
   scheduleUrl: string;
   applyUrl: string;
+  imageUrl: string;
+  detailUrl: string;
   status: string;
+  tags: string[];
+}
+
+export interface ContestInfo {
+  title: string;
+  organization: string;
+  description: string;
+  category: string;
+  period: string;
+  imageUrl: string;
+  detailUrl: string;
+  sourceName: string;
   tags: string[];
 }
 
@@ -45,9 +59,11 @@ export interface CareerRecordCard {
 export interface CareerPortalResponse {
   jobPostings: JobPosting[];
   certificationSites: CertificationSite[];
+  contestInfos: ContestInfo[];
   careerRecordCards: CareerRecordCard[];
   jobError: string | null;
   certificationNotice: string | null;
+  contestError: string | null;
   sourceStatus: string;
 }
 

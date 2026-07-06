@@ -8,24 +8,30 @@ public class CareerPortalResponseDto {
 
     private final List<JobPostingDto> jobPostings;
     private final List<CertificationSiteDto> certificationSites;
+    private final List<ContestInfoDto> contestInfos;
     private final List<CareerRecordCardDto> careerRecordCards;
     private final String jobError;
     private final String certificationNotice;
+    private final String contestError;
     private final String sourceStatus;
 
     public CareerPortalResponseDto(
             List<JobPostingDto> jobPostings,
             List<CertificationSiteDto> certificationSites,
+            List<ContestInfoDto> contestInfos,
             List<CareerRecordCardDto> careerRecordCards,
             String jobError,
             String certificationNotice,
+            String contestError,
             String sourceStatus
     ) {
         this.jobPostings = jobPostings;
         this.certificationSites = certificationSites;
+        this.contestInfos = contestInfos;
         this.careerRecordCards = careerRecordCards;
         this.jobError = jobError;
         this.certificationNotice = certificationNotice;
+        this.contestError = contestError;
         this.sourceStatus = sourceStatus;
     }
 
@@ -83,6 +89,8 @@ public class CareerPortalResponseDto {
         private final String description;
         private final String scheduleUrl;
         private final String applyUrl;
+        private final String imageUrl;
+        private final String detailUrl;
         private final String status;
         private final List<String> tags;
 
@@ -92,6 +100,8 @@ public class CareerPortalResponseDto {
                 String description,
                 String scheduleUrl,
                 String applyUrl,
+                String imageUrl,
+                String detailUrl,
                 String status,
                 List<String> tags
         ) {
@@ -100,7 +110,44 @@ public class CareerPortalResponseDto {
             this.description = description;
             this.scheduleUrl = scheduleUrl;
             this.applyUrl = applyUrl;
+            this.imageUrl = imageUrl;
+            this.detailUrl = detailUrl;
             this.status = status;
+            this.tags = tags;
+        }
+    }
+
+    @Getter
+    public static class ContestInfoDto {
+        private final String title;
+        private final String organization;
+        private final String description;
+        private final String category;
+        private final String period;
+        private final String imageUrl;
+        private final String detailUrl;
+        private final String sourceName;
+        private final List<String> tags;
+
+        public ContestInfoDto(
+                String title,
+                String organization,
+                String description,
+                String category,
+                String period,
+                String imageUrl,
+                String detailUrl,
+                String sourceName,
+                List<String> tags
+        ) {
+            this.title = title;
+            this.organization = organization;
+            this.description = description;
+            this.category = category;
+            this.period = period;
+            this.imageUrl = imageUrl;
+            this.detailUrl = detailUrl;
+            this.sourceName = sourceName;
             this.tags = tags;
         }
     }

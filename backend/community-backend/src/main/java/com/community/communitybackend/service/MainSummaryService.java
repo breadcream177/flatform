@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -132,8 +133,7 @@ public class MainSummaryService {
     }
 
     public List<WebtoonPreviewDto> getWebtoonItems(String week) {
-        String safeWeek = normalizeWebtoonWeek(week);
-        return requestWebtoonItems(safeWeek);
+        return requestWebtoonItems(normalizeWebtoonWeek(week));
     }
 
     private NewsResult loadNewsPreview() {
@@ -251,19 +251,18 @@ public class MainSummaryService {
                     + stockQuery.symbol()
                     + "?range=5d&interval=1d";
             JsonNode root = objectMapper.readTree(requestExternalText(requestUrl));
-            JsonNode result = root.path("chart").path("result").path(0);
-            JsonNode meta = result.path("meta");
+            JsonNode meta = root.path("chart").path("result").path(0).path("meta");
             BigDecimal price = meta.path("regularMarketPrice").decimalValue();
             BigDecimal previousClose = meta.path("chartPreviousClose").decimalValue();
 
-            if (price == null || previousClose == null || BigDecimal.ZERO.compareTo(previousClose) == 0) {
+            if (previousClose.compareTo(BigDecimal.ZERO) == 0) {
                 return null;
             }
 
             BigDecimal change = price.subtract(previousClose);
             BigDecimal changePercent = change
                     .multiply(BigDecimal.valueOf(100))
-                    .divide(previousClose, 2, java.math.RoundingMode.HALF_UP);
+                    .divide(previousClose, 2, RoundingMode.HALF_UP);
 
             return new MarketStockPreviewDto(
                     stockQuery.symbol(),
@@ -343,10 +342,6 @@ public class MainSummaryService {
             }
         }
 
-        return objectMapperMissingArray();
-    }
-
-    private JsonNode objectMapperMissingArray() {
         return new ObjectMapper().createArrayNode();
     }
 
@@ -429,25 +424,7 @@ public class MainSummaryService {
     }
 
     private String readLimitedHtml(InputStream inputStream) throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[4096];
-        int totalBytes = 0;
-        int readBytes;
-
-        while ((readBytes = inputStream.read(buffer)) != -1) {
-            int writableBytes = Math.min(readBytes, NEWS_IMAGE_HTML_LIMIT_BYTES - totalBytes);
-
-            if (writableBytes > 0) {
-                outputStream.write(buffer, 0, writableBytes);
-                totalBytes += writableBytes;
-            }
-
-            if (totalBytes >= NEWS_IMAGE_HTML_LIMIT_BYTES) {
-                break;
-            }
-        }
-
-        return outputStream.toString(java.nio.charset.StandardCharsets.UTF_8);
+        return readLimitedText(inputStream, NEWS_IMAGE_HTML_LIMIT_BYTES);
     }
 
     private String readLimitedText(InputStream inputStream, int limitBytes) throws Exception {
@@ -469,7 +446,7 @@ public class MainSummaryService {
             }
         }
 
-        return outputStream.toString(java.nio.charset.StandardCharsets.UTF_8);
+        return outputStream.toString(StandardCharsets.UTF_8);
     }
 
     private String extractOpenGraphImage(String html) {

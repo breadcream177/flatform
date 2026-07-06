@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './Layout.css';
 
 const RECENT_SEARCH_KEY = 'recentSearchKeywords';
 const SEARCH_AUTO_SAVE_KEY = 'searchAutoSaveEnabled';
+const DESKTOP_VIEW_KEY = 'desktopViewEnabled';
 
 const DEFAULT_AUTOCOMPLETE_KEYWORDS = [
   'IT 신입 개발자',
@@ -24,7 +25,7 @@ interface LayoutLoginUser {
 }
 
 function readLoginUser() {
-  const storedUser = localStorage.getItem('loginUser');
+  const storedUser = localStorage.getItem('loginUser') || localStorage.getItem('user');
 
   if (!storedUser) {
     return null;
@@ -35,6 +36,7 @@ function readLoginUser() {
   } catch (error) {
     console.error('로그인 사용자 정보를 읽지 못했습니다.', error);
     localStorage.removeItem('loginUser');
+    localStorage.removeItem('user');
     return null;
   }
 }
@@ -50,6 +52,7 @@ export default function Layout() {
   const [autoSaveEnabled, setAutoSaveEnabled] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [loginUser, setLoginUser] = useState<LayoutLoginUser | null>(null);
+  const [desktopViewEnabled, setDesktopViewEnabled] = useState(false);
 
   useEffect(() => {
     const savedKeywords = localStorage.getItem(RECENT_SEARCH_KEY);
@@ -69,7 +72,34 @@ export default function Layout() {
     }
 
     setLoginUser(readLoginUser());
+    setDesktopViewEnabled(localStorage.getItem(DESKTOP_VIEW_KEY) === 'true');
   }, []);
+
+  useEffect(() => {
+    let viewport = document.querySelector<HTMLMetaElement>('meta[name="viewport"]');
+
+    if (!viewport) {
+      viewport = document.createElement('meta');
+      viewport.name = 'viewport';
+      document.head.appendChild(viewport);
+    }
+
+    const defaultViewport =
+      viewport.dataset.defaultContent ?? viewport.getAttribute('content') ?? 'width=device-width, initial-scale=1.0';
+
+    viewport.dataset.defaultContent = defaultViewport;
+
+    if (desktopViewEnabled) {
+      viewport.setAttribute('content', 'width=1280');
+      document.documentElement.classList.add('force-desktop-view');
+      localStorage.setItem(DESKTOP_VIEW_KEY, 'true');
+      return;
+    }
+
+    viewport.setAttribute('content', defaultViewport);
+    document.documentElement.classList.remove('force-desktop-view');
+    localStorage.removeItem(DESKTOP_VIEW_KEY);
+  }, [desktopViewEnabled]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -84,7 +114,7 @@ export default function Layout() {
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'loginUser') {
+      if (event.key === 'loginUser' || event.key === 'user') {
         setLoginUser(readLoginUser());
       }
     };
@@ -159,7 +189,7 @@ export default function Layout() {
     navigate(`/search?keyword=${encodeURIComponent(targetKeyword)}`);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (!showSearchDropdown && event.key !== 'Enter') {
       setShowSearchDropdown(true);
       return;
@@ -227,6 +257,7 @@ export default function Layout() {
 
   const handleMobileLogout = () => {
     localStorage.removeItem('loginUser');
+    localStorage.removeItem('user');
     setLoginUser(null);
     navigate('/');
   };
@@ -261,7 +292,7 @@ export default function Layout() {
                     onClick={handleClearKeyword}
                     aria-label="검색어 지우기"
                   >
-                    ×
+                    x
                   </button>
                 )}
 
@@ -323,7 +354,7 @@ export default function Layout() {
                                 className="recent-search-delete"
                                 onClick={() => handleDeleteRecentKeyword(item)}
                               >
-                                ×
+                                x
                               </button>
                             )}
                           </li>
@@ -363,6 +394,15 @@ export default function Layout() {
           <Outlet />
         </div>
       </main>
+
+      <button
+        type="button"
+        className={desktopViewEnabled ? 'desktop-view-toggle active' : 'desktop-view-toggle'}
+        onClick={() => setDesktopViewEnabled((prev) => !prev)}
+        aria-pressed={desktopViewEnabled}
+      >
+        {desktopViewEnabled ? '모바일 보기' : 'PC버전'}
+      </button>
 
       <nav className="mobile-bottom-nav" aria-label="모바일 주요 메뉴">
         <button type="button" onClick={() => navigate('/')}>

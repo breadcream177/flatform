@@ -1,12 +1,13 @@
 package com.community.communitybackend.service;
 
-import com.community.communitybackend.dto.AuthResponseDto;
 import com.community.communitybackend.dto.AccountRecoveryResponseDto;
+import com.community.communitybackend.dto.AuthResponseDto;
 import com.community.communitybackend.dto.FindUsernameRequestDto;
 import com.community.communitybackend.dto.LoginRequestDto;
 import com.community.communitybackend.dto.PasswordResetConfirmRequestDto;
 import com.community.communitybackend.dto.PasswordResetRequestDto;
 import com.community.communitybackend.dto.SignupRequestDto;
+import com.community.communitybackend.dto.UpdateNicknameRequestDto;
 import com.community.communitybackend.entity.PasswordResetToken;
 import com.community.communitybackend.entity.User;
 import com.community.communitybackend.repository.PasswordResetTokenRepository;
@@ -18,7 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.community.communitybackend.dto.UpdateNicknameRequestDto;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +35,8 @@ import java.util.Optional;
 public class AuthService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
+    private static final int RESET_TOKEN_MINUTES = 30;
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     private final UserRepository userRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
@@ -42,9 +45,6 @@ public class AuthService {
 
     @Value("${app.frontend-origin:http://localhost:5173}")
     private String frontendOrigin;
-
-    private static final int RESET_TOKEN_MINUTES = 30;
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
     @Transactional
     public AuthResponseDto signup(SignupRequestDto request) {
@@ -86,11 +86,9 @@ public class AuthService {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
         }
 
-        String encodedPassword = passwordEncoder.encode(rawPassword);
-
         User user = User.createLocalUser(
                 email,
-                encodedPassword,
+                passwordEncoder.encode(rawPassword),
                 username,
                 realName.isEmpty() ? null : realName,
                 nickname
@@ -169,10 +167,8 @@ public class AuthService {
                 accountMailService.send(
                         targetUser.getEmail(),
                         "[Between Jobs] 로그인 방식 안내",
-                        "이 이메일은 Between Jobs의 " + displayProvider(targetUser.getProvider())
-                                + " 로그인 계정입니다.\n\n"
-                                + "로그인 화면에서 " + displayProvider(targetUser.getProvider())
-                                + " 로그인을 이용해주세요.\n"
+                        "이 이메일은 Between Jobs의 " + displayProvider(targetUser.getProvider()) + " 로그인 계정입니다.\n\n"
+                                + "로그인 화면에서 " + displayProvider(targetUser.getProvider()) + " 로그인을 이용해주세요.\n"
                                 + "소셜 로그인 계정은 일반 비밀번호를 저장하지 않으므로 비밀번호 재설정 대상이 아닙니다."
                 );
                 log.info("[ACCOUNT_RECOVERY] type=FIND_USERNAME status=SOCIAL_MAIL_SENT provider={} emailHash={}",
@@ -314,6 +310,7 @@ public class AuthService {
                 user.getRole()
         );
     }
+
     private String trim(String value) {
         return value == null ? "" : value.trim();
     }
@@ -350,7 +347,7 @@ public class AuthService {
 
             return HexFormat.of().formatHex(hashedToken);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("비밀번호 재설정 토큰을 처리할 수 없습니다.");
+            throw new IllegalStateException("비밀번호 재설정 토큰을 처리할 수 없습니다.", e);
         }
     }
 

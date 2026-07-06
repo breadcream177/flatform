@@ -4,6 +4,8 @@ import {
   fetchCareerPortal,
   type CareerPortalParams,
   type CareerPortalResponse,
+  type CertificationSite,
+  type ContestInfo,
   type JobPosting,
 } from '../../api/careerApi';
 import {
@@ -20,10 +22,11 @@ import { getTodosByUserId, type TodoItem } from '../../api/todoApi';
 import './MainPage.css';
 
 interface LoginUser {
-  userId: number;
+  id?: number;
+  userId?: number;
   username: string;
-  nickname: string;
-  role: string;
+  nickname?: string;
+  role?: string;
 }
 
 interface MainSideData {
@@ -46,6 +49,13 @@ interface JobFilterForm {
   maxSalary: string;
 }
 
+interface SourceTab {
+  key: string;
+  label: string;
+  officialUrl?: string;
+  aliases: string[];
+}
+
 const emptySideData: MainSideData = {
   weather: null,
   exchangeRate: null,
@@ -55,23 +65,25 @@ const emptySideData: MainSideData = {
 const emptyCareerPortal: CareerPortalResponse = {
   jobPostings: [],
   certificationSites: [],
+  contestInfos: [],
   careerRecordCards: [],
   jobError: null,
   certificationNotice: null,
+  contestError: null,
   sourceStatus: '',
 };
 
 const productTabs: ProductTab[] = [
   {
     label: '취업 준비',
-    keyword: '이력서 세트 자기소개서 포트폴리오 파일',
+    keyword: '이력서 세트 자기소개서 포트폴리오 파일 취업 준비',
     description: '이력서, 자기소개서, 포트폴리오 정리에 필요한 준비물입니다.',
     chips: ['이력서 세트', '자기소개서 책', '포트폴리오 파일', '면접 준비물'],
   },
   {
     label: '면접 복장',
     keyword: '면접 정장 구두 셔츠 블라우스',
-    description: '첫인상과 실용성을 같이 챙기기 위한 면접 복장 추천 결과입니다.',
+    description: '첫인상과 실용성을 함께 챙기기 위한 면접 복장 추천 결과입니다.',
     chips: ['남성 면접 정장', '여성 면접 정장', '면접 구두', '셔츠 블라우스'],
   },
   {
@@ -88,14 +100,14 @@ const productTabs: ProductTab[] = [
   },
   {
     label: '자격증 교재',
-    keyword: '정보처리기사 컴활 ITQ 자격증 교재',
-    description: '취업 준비에 자주 쓰이는 자격증 교재와 문제집입니다.',
+    keyword: '정보처리기사 컴활 ITQ SQLD 자격증 교재',
+    description: '취업 준비에 자주 쓰이는 IT/OA 자격증 교재와 문제집입니다.',
     chips: ['정보처리기사', '컴퓨터활용능력', 'ITQ', 'SQLD'],
   },
   {
     label: '출근 신발',
     keyword: '면접 구두 출근 신발 로퍼',
-    description: '면접과 첫 출근에 무난하게 쓰기 좋은 신발 추천 결과입니다.',
+    description: '면접과 첫 출근에 무난하게 신기 좋은 신발 추천 결과입니다.',
     chips: ['면접 구두', '출근 로퍼', '정장 신발', '편한 구두'],
   },
 ];
@@ -107,8 +119,74 @@ const careerServiceLinks = [
   { label: '잡코리아', url: 'https://www.jobkorea.co.kr' },
   { label: '워크넷', url: 'https://www.work.go.kr' },
   { label: '알바천국', url: 'https://www.alba.co.kr' },
-  { label: 'Q-Net', url: 'https://www.q-net.or.kr' },
-  { label: '대한상공회의소', url: 'https://license.korcham.net' },
+];
+
+const certificationSourceTabs: SourceTab[] = [
+  { key: 'all', label: '전체', aliases: [] },
+  {
+    key: 'qnet',
+    label: 'Q-Net',
+    officialUrl: 'https://www.q-net.or.kr/crf021.do?id=crf02101&gSite=Q&gId=',
+    aliases: ['q-net', 'qnet'],
+  },
+  {
+    key: 'korcham',
+    label: '대한상공회의소',
+    officialUrl: 'https://license.korcham.net/exam/examList.do',
+    aliases: ['대한상공회의소', 'korcham'],
+  },
+  {
+    key: 'kpc',
+    label: 'KPC',
+    officialUrl: 'https://license.kpc.or.kr/kpc/qualfAthrz/index.do',
+    aliases: ['kpc'],
+  },
+  {
+    key: 'dataq',
+    label: '데이터자격검정',
+    officialUrl: 'https://www.dataq.or.kr/www/sub/a_06.do',
+    aliases: ['데이터자격검정', 'dataq', 'data'],
+  },
+];
+
+const contestSourceTabs: SourceTab[] = [
+  { key: 'all', label: '전체', aliases: [] },
+  {
+    key: 'wevity',
+    label: '위비티',
+    officialUrl: 'https://www.wevity.com/?c=find&s=1&gbn=list&sp=contents&sw=IT',
+    aliases: ['wevity', '위비티'],
+  },
+  {
+    key: 'linkareer',
+    label: '링커리어',
+    officialUrl: 'https://linkareer.com/list/contest',
+    aliases: ['linkareer', '링커리어'],
+  },
+  {
+    key: 'thinkcontest',
+    label: '씽굿',
+    officialUrl: 'https://www.thinkcontest.com/Contest/CateField.html',
+    aliases: ['thinkcontest', '씽굿'],
+  },
+  {
+    key: 'contestkorea',
+    label: '콘테스트코리아',
+    officialUrl: 'https://www.contestkorea.com/sub/list.php',
+    aliases: ['contestkorea', '콘테스트코리아'],
+  },
+  {
+    key: 'kstartup',
+    label: 'K-Startup',
+    officialUrl: 'https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do',
+    aliases: ['k-startup', 'kstartup'],
+  },
+  {
+    key: 'data',
+    label: '공공데이터',
+    officialUrl: 'https://www.data.go.kr/tcs/eds/contestDataList.do',
+    aliases: ['data.go.kr', '공공데이터'],
+  },
 ];
 
 const initialJobFilter: JobFilterForm = {
@@ -158,7 +236,7 @@ function formatNumber(value?: number | null, digits = 0) {
 
 function formatPrice(value: number | null) {
   if (value === null) {
-    return '가격 정보 확인 필요';
+    return '가격 확인 필요';
   }
 
   return `${formatNumber(value)}원`;
@@ -169,7 +247,7 @@ function formatSigned(value: number) {
   return `${prefix}${formatNumber(value, 2)}`;
 }
 
-function stockChangeClass(stock: MainMarketStockPreview) {
+function getStockChangeClass(stock: MainMarketStockPreview) {
   if (stock.change > 0) return 'up';
   if (stock.change < 0) return 'down';
   return '';
@@ -198,6 +276,19 @@ function toCareerParams(form: JobFilterForm): CareerPortalParams {
   };
 }
 
+function buildSearchPath(keyword: string) {
+  return `/search?keyword=${encodeURIComponent(keyword)}`;
+}
+
+function matchesSourceTab(values: Array<string | undefined | null>, tab: SourceTab) {
+  if (tab.key === 'all') {
+    return true;
+  }
+
+  const joined = values.map((value) => cleanText(value).toLowerCase()).join(' ');
+  return tab.aliases.some((alias) => joined.includes(alias.toLowerCase()));
+}
+
 function MainPage() {
   const navigate = useNavigate();
 
@@ -218,6 +309,8 @@ function MainPage() {
   const [careerPortal, setCareerPortal] = useState<CareerPortalResponse>(emptyCareerPortal);
   const [jobFilter, setJobFilter] = useState<JobFilterForm>(initialJobFilter);
   const [jobLoading, setJobLoading] = useState(false);
+  const [activeCertificationSource, setActiveCertificationSource] = useState(certificationSourceTabs[0]);
+  const [activeContestSource, setActiveContestSource] = useState(contestSourceTabs[0]);
 
   const [todos, setTodos] = useState<TodoItem[]>([]);
 
@@ -229,6 +322,27 @@ function MainPage() {
     return loginUser.nickname || loginUser.username;
   }, [loginUser]);
 
+  const loginUserId = loginUser?.userId ?? loginUser?.id;
+
+  const filteredCertificationSites = useMemo(
+    () =>
+      careerPortal.certificationSites.filter((site) =>
+        matchesSourceTab([site.name, site.organization, site.description, ...(site.tags ?? [])], activeCertificationSource)
+      ),
+    [activeCertificationSource, careerPortal.certificationSites]
+  );
+
+  const filteredContestInfos = useMemo(
+    () =>
+      careerPortal.contestInfos.filter((contest) =>
+        matchesSourceTab(
+          [contest.title, contest.organization, contest.sourceName, contest.category, ...(contest.tags ?? [])],
+          activeContestSource
+        )
+      ),
+    [activeContestSource, careerPortal.contestInfos]
+  );
+
   const loadMainSummary = useCallback(async () => {
     try {
       setMainError('');
@@ -236,7 +350,7 @@ function MainPage() {
       setSideData({
         weather: summary.weather,
         exchangeRate: summary.exchangeRate,
-        marketStocks: summary.marketStocks,
+        marketStocks: summary.marketStocks ?? [],
       });
 
       if (summary.news.length > 0) {
@@ -267,11 +381,11 @@ function MainPage() {
     }
   }, []);
 
-  const loadShoppingItems = useCallback(async (tab: ProductTab) => {
+  const loadShoppingItems = useCallback(async (keyword: string) => {
     try {
       setShoppingLoading(true);
       setShoppingError('');
-      const items = await fetchMainShopping(tab.keyword);
+      const items = await fetchMainShopping(keyword);
       setShoppingItems(items);
     } catch (error) {
       console.error(error);
@@ -286,12 +400,19 @@ function MainPage() {
     try {
       setJobLoading(true);
       const data = await fetchCareerPortal(params);
-      setCareerPortal(data);
+      setCareerPortal({
+        ...emptyCareerPortal,
+        ...data,
+        jobPostings: data.jobPostings ?? [],
+        certificationSites: data.certificationSites ?? [],
+        contestInfos: data.contestInfos ?? [],
+        careerRecordCards: data.careerRecordCards ?? [],
+      });
     } catch (error) {
       console.error(error);
       setCareerPortal({
         ...emptyCareerPortal,
-        jobError: error instanceof Error ? error.message : '커리어 정보를 불러오지 못했습니다.',
+        jobError: error instanceof Error ? error.message : '커리어 포털 정보를 불러오지 못했습니다.',
         sourceStatus: 'CAREER_ERROR',
       });
     } finally {
@@ -309,22 +430,22 @@ function MainPage() {
   }, [loadCareerNews, newsTopic]);
 
   useEffect(() => {
-    loadShoppingItems(activeProductTab);
+    loadShoppingItems(activeProductTab.keyword);
   }, [activeProductTab, loadShoppingItems]);
 
   useEffect(() => {
-    if (!loginUser?.userId) {
+    if (!loginUserId) {
       setTodos([]);
       return;
     }
 
-    getTodosByUserId(loginUser.userId)
+    getTodosByUserId(loginUserId)
       .then((items) => setTodos(items.slice(0, 3)))
       .catch((error) => {
         console.error(error);
         setTodos([]);
       });
-  }, [loginUser]);
+  }, [loginUserId]);
 
   const openExternal = (url: string) => {
     if (!url) {
@@ -332,10 +453,6 @@ function MainPage() {
     }
 
     window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
-  const handleProductTabClick = (tab: ProductTab) => {
-    setActiveProductTab(tab);
   };
 
   const handleJobFormChange = (key: keyof JobFilterForm, value: string) => {
@@ -359,19 +476,21 @@ function MainPage() {
 
   const renderNewsCard = (item: MainNewsPreview) => (
     <article key={`${item.link}-${item.title}`} className="career-news-card">
-      {item.imageUrl ? (
-        <button type="button" className="news-thumb" onClick={() => openExternal(item.originallink || item.link)}>
-          <img src={item.imageUrl} alt="" />
-        </button>
-      ) : (
-        <button type="button" className="news-thumb empty" onClick={() => openExternal(item.originallink || item.link)}>
-          NEWS
-        </button>
-      )}
+      <button
+        type="button"
+        className="news-thumb"
+        onClick={() => openExternal(item.originallink || item.link)}
+      >
+        {item.imageUrl ? <img src={item.imageUrl} alt="" /> : <span>NEWS</span>}
+      </button>
 
       <div>
         <span className="content-source">뉴스</span>
-        <button type="button" className="content-title-button" onClick={() => openExternal(item.originallink || item.link)}>
+        <button
+          type="button"
+          className="content-title-button"
+          onClick={() => openExternal(item.originallink || item.link)}
+        >
           {cleanText(item.title)}
         </button>
         <p>{cleanText(item.description)}</p>
@@ -419,34 +538,76 @@ function MainPage() {
     </article>
   );
 
+  const renderCertificationCard = (site: CertificationSite) => (
+    <article key={site.name} className="cert-card">
+      <button
+        type="button"
+        className="cert-icon"
+        onClick={() => openExternal(site.detailUrl || site.scheduleUrl)}
+      >
+        {site.imageUrl ? <img src={site.imageUrl} alt="" /> : <span>{site.organization.slice(0, 2)}</span>}
+      </button>
+      <div>
+        <span>{site.organization}</span>
+        <h3>{site.name}</h3>
+        <p>{site.description}</p>
+        <div className="chip-row">
+          {site.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+        <div className="cert-actions">
+          <button type="button" onClick={() => openExternal(site.scheduleUrl)}>
+            일정 보기
+          </button>
+          <button type="button" onClick={() => openExternal(site.applyUrl)}>
+            접수 페이지
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+
+  const renderContestCard = (contest: ContestInfo) => (
+    <article key={`${contest.detailUrl}-${contest.title}`} className="contest-card">
+      <button type="button" className="contest-image" onClick={() => openExternal(contest.detailUrl)}>
+        {contest.imageUrl ? (
+          <img src={contest.imageUrl} alt="" />
+        ) : (
+          <span>{cleanText(contest.sourceName || contest.organization).slice(0, 2) || '공모'}</span>
+        )}
+      </button>
+      <div>
+        <span className="content-source">{contest.sourceName || contest.organization}</span>
+        <button
+          type="button"
+          className="content-title-button"
+          onClick={() => openExternal(contest.detailUrl)}
+        >
+          {cleanText(contest.title)}
+        </button>
+        <p>{cleanText(contest.description)}</p>
+        <small>{contest.period || contest.category}</small>
+        <div className="chip-row">
+          {contest.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+
   return (
     <div className="career-main-page">
       <main className="career-main-inner">
         <div className="career-main-content">
-          <section className="career-hero-card">
-            <span>BETWEEN JOBS</span>
-            <h1>취업 준비, 검색, 기록을 한 화면에서 이어가는 커리어 포털</h1>
-            <p>
-              취업 뉴스, IT 채용 공고, 자격증 일정, 면접 준비용 상품, 이력서 기록을 실제 데이터와
-              공식 링크 중심으로 확인합니다.
-            </p>
-            <div className="hero-actions">
-              <button type="button" onClick={() => navigate('/search?keyword=IT 신입 개발자')}>
-                통합 검색 시작
-              </button>
-              <button type="button" onClick={() => navigate('/posts')}>
-                게시글 보기
-              </button>
-            </div>
-          </section>
-
           <section className="portal-section news-section">
             <div className="section-heading">
               <div>
                 <span>CAREER NEWS</span>
                 <h2>취업 뉴스 브리핑</h2>
               </div>
-              <button type="button" onClick={() => navigate(`/search?keyword=${encodeURIComponent(newsTopic)}`)}>
+              <button type="button" onClick={() => navigate(buildSearchPath(newsTopic))}>
                 더 검색하기
               </button>
             </div>
@@ -467,13 +628,11 @@ function MainPage() {
             {newsLoading && <p className="state-message">뉴스 정보를 불러오는 중입니다.</p>}
             {!newsLoading && newsError && <p className="state-message error">{newsError}</p>}
             {!newsLoading && !newsError && careerNews.length === 0 && (
-              <p className="state-message">표시할 뉴스가 없습니다. 네이버 API 키와 백엔드 상태를 확인해주세요.</p>
+              <p className="state-message">표시할 뉴스가 없습니다. 네이버 API 설정과 백엔드 상태를 확인해주세요.</p>
             )}
 
             {!newsLoading && careerNews.length > 0 && (
-              <div className="career-news-grid">
-                {careerNews.slice(0, 6).map(renderNewsCard)}
-              </div>
+              <div className="career-news-grid">{careerNews.slice(0, 6).map(renderNewsCard)}</div>
             )}
           </section>
 
@@ -489,7 +648,7 @@ function MainPage() {
             <div className="product-filter-panel">
               <div className="mall-links">
                 {['쿠팡', 'G마켓', '옥션', '11번가', '올리브영', 'SSG닷컴', '하프클럽', '이마트몰'].map((mall) => (
-                  <button key={mall} type="button" onClick={() => navigate(`/search?keyword=${encodeURIComponent(mall)}`)}>
+                  <button key={mall} type="button" onClick={() => loadShoppingItems(mall)}>
                     {mall}
                   </button>
                 ))}
@@ -501,7 +660,7 @@ function MainPage() {
                     key={tab.label}
                     type="button"
                     className={activeProductTab.label === tab.label ? 'active' : ''}
-                    onClick={() => handleProductTabClick(tab)}
+                    onClick={() => setActiveProductTab(tab)}
                   >
                     {tab.label}
                   </button>
@@ -511,9 +670,9 @@ function MainPage() {
 
             <p className="section-guide">{activeProductTab.description}</p>
 
-            <div className="chip-row">
+            <div className="chip-row button-row">
               {activeProductTab.chips.map((chip) => (
-                <button key={chip} type="button" onClick={() => navigate(`/search?keyword=${encodeURIComponent(chip)}`)}>
+                <button key={chip} type="button" onClick={() => loadShoppingItems(chip)}>
                   {chip}
                 </button>
               ))}
@@ -522,13 +681,11 @@ function MainPage() {
             {shoppingLoading && <p className="state-message">쇼핑 정보를 불러오는 중입니다.</p>}
             {!shoppingLoading && shoppingError && <p className="state-message error">{shoppingError}</p>}
             {!shoppingLoading && !shoppingError && shoppingItems.length === 0 && (
-              <p className="state-message">표시할 상품이 없습니다. 네이버 쇼핑 API 키와 백엔드 상태를 확인해주세요.</p>
+              <p className="state-message">표시할 상품이 없습니다. 네이버 쇼핑 API 설정과 백엔드 상태를 확인해주세요.</p>
             )}
 
             {!shoppingLoading && shoppingItems.length > 0 && (
-              <div className="product-grid">
-                {shoppingItems.slice(0, 8).map(renderProductCard)}
-              </div>
+              <div className="product-grid">{shoppingItems.slice(0, 8).map(renderProductCard)}</div>
             )}
           </section>
 
@@ -588,9 +745,7 @@ function MainPage() {
             )}
 
             {!jobLoading && careerPortal.jobPostings.length > 0 && (
-              <div className="job-grid">
-                {careerPortal.jobPostings.map(renderJobCard)}
-              </div>
+              <div className="job-grid">{careerPortal.jobPostings.map(renderJobCard)}</div>
             )}
           </section>
 
@@ -601,55 +756,85 @@ function MainPage() {
                 <h2>자격증 일정 허브</h2>
               </div>
             </div>
-            {careerPortal.certificationNotice && (
-              <p className="section-guide">{careerPortal.certificationNotice}</p>
-            )}
-            <div className="certification-grid">
-              {careerPortal.certificationSites.map((site) => (
-                <article key={site.name} className="cert-card">
-                  <span>{site.organization}</span>
-                  <h3>{site.name}</h3>
-                  <p>{site.description}</p>
-                  <div className="chip-row">
-                    {site.tags.map((tag) => (
-                      <span key={tag}>{tag}</span>
-                    ))}
-                  </div>
-                  <div className="cert-actions">
-                    <button type="button" onClick={() => openExternal(site.scheduleUrl)}>
-                      일정 보기
-                    </button>
-                    <button type="button" onClick={() => openExternal(site.applyUrl)}>
-                      접수 페이지
-                    </button>
-                  </div>
-                </article>
+            {careerPortal.certificationNotice && <p className="section-guide">{careerPortal.certificationNotice}</p>}
+            <div className="source-tabs">
+              {certificationSourceTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={activeCertificationSource.key === tab.key ? 'active' : ''}
+                  onClick={() => setActiveCertificationSource(tab)}
+                >
+                  {tab.label}
+                </button>
               ))}
             </div>
+            {filteredCertificationSites.length === 0 ? (
+              <p className="state-message">표시할 자격증 사이트 정보가 없습니다.</p>
+            ) : (
+              <div className="certification-grid">{filteredCertificationSites.map(renderCertificationCard)}</div>
+            )}
+          </section>
+
+          <section className="portal-section contest-section">
+            <div className="section-heading">
+              <div>
+                <span>CONTEST</span>
+                <h2>공모전과 대외활동</h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => openExternal(activeContestSource.officialUrl || 'https://www.wevity.com/')}
+              >
+                더 찾기
+              </button>
+            </div>
+            {careerPortal.contestError && <p className="section-guide warning">{careerPortal.contestError}</p>}
+            <div className="source-tabs">
+              {contestSourceTabs.map((tab) => (
+                <button
+                  key={tab.key}
+                  type="button"
+                  className={activeContestSource.key === tab.key ? 'active' : ''}
+                  onClick={() => setActiveContestSource(tab)}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {filteredContestInfos.length === 0 ? (
+              <p className="state-message">표시할 공모전 정보가 없습니다.</p>
+            ) : (
+              <div className="contest-grid">{filteredContestInfos.map(renderContestCard)}</div>
+            )}
           </section>
 
           <section className="portal-section record-section">
             <div className="section-heading">
               <div>
                 <span>CAREER RECORD</span>
-                <h2>이력서 · 자기소개서 · 포트폴리오 기록</h2>
+                <h2>이력서, 자기소개서, 포트폴리오 기록</h2>
               </div>
               <button type="button" onClick={() => navigate('/todos')}>
                 기록하러 가기
               </button>
             </div>
-            <div className="record-grid">
-              {careerPortal.careerRecordCards.map((card) => (
-                <article key={card.title} className="record-card">
-                  <span>{card.tag}</span>
-                  <h3>{card.title}</h3>
-                  <p>{card.description}</p>
-                  <button type="button" onClick={() => navigate(card.path)}>
-                    열기
-                  </button>
-                </article>
-              ))}
-            </div>
+            {careerPortal.careerRecordCards.length === 0 ? (
+              <p className="state-message">표시할 기록 카드가 없습니다.</p>
+            ) : (
+              <div className="record-grid">
+                {careerPortal.careerRecordCards.map((card) => (
+                  <article key={card.title} className="record-card">
+                    <span>{card.tag}</span>
+                    <h3>{card.title}</h3>
+                    <p>{card.description}</p>
+                    <button type="button" onClick={() => navigate(card.path)}>
+                      열기
+                    </button>
+                  </article>
+                ))}
+              </div>
+            )}
           </section>
         </div>
 
@@ -663,7 +848,7 @@ function MainPage() {
                 </button>
                 <div className="side-link-row">
                   <button type="button" onClick={() => navigate('/todos')}>
-                    지원 일정
+                    일정 기록
                   </button>
                   <button type="button" onClick={() => navigate('/blog')}>
                     블로그
@@ -683,7 +868,7 @@ function MainPage() {
                   <button type="button" onClick={() => navigate('/find-account')}>
                     아이디 찾기
                   </button>
-                  <button type="button" onClick={() => navigate('/reset-password')}>
+                  <button type="button" onClick={() => navigate('/password-reset/request')}>
                     비밀번호 찾기
                   </button>
                   <button type="button" onClick={() => navigate('/signup')}>
@@ -759,7 +944,7 @@ function MainPage() {
                       <strong>{stock.name}</strong>
                       <span>{stock.symbol}</span>
                     </div>
-                    <div className={stockChangeClass(stock)}>
+                    <div className={getStockChangeClass(stock)}>
                       <strong>{formatNumber(stock.price)}</strong>
                       <span>
                         {formatSigned(stock.change)} / {formatSigned(stock.changePercent)}%

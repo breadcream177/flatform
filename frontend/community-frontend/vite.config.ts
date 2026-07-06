@@ -6,7 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      'keepable-shanda-indefeasibly.ngrok-free.dev'
-    ]
+      '.ngrok-free.dev',
+    ],
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
   }
 })

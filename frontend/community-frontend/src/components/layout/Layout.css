@@ -233,6 +233,10 @@
   display: none;
 }
 
+.desktop-view-toggle {
+  display: none;
+}
+
 @media (max-width: 900px) {
   .layout {
     background: #eef3f7;
@@ -331,6 +335,28 @@
     font-size: 11px;
     font-weight: 900;
   }
+
+  .desktop-view-toggle {
+    position: fixed;
+    right: 14px;
+    bottom: calc(78px + env(safe-area-inset-bottom));
+    z-index: 45;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 72px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #d8e5de;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #244136;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: 0 8px 22px rgba(9, 32, 25, 0.14);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+  }
 }
 
 @media (max-width: 420px) {
@@ -347,4 +373,29 @@
   .layout-search-submit-button {
     min-width: 52px;
   }
+}
+
+.desktop-view-toggle.active {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d8e5de;
+  border-radius: 999px;
+  background: #fff;
+  color: #244136;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 10px 24px rgba(9, 32, 25, 0.16);
+  cursor: pointer;
+}
+
+html.force-desktop-view .mobile-bottom-nav {
+  display: none;
 }
