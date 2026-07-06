@@ -1,4 +1,4 @@
-# Between Jobs Community Project
+# 개인 간편 웹페이지
 
 취업 준비와 커뮤니티 활동을 함께 다루는 React + Spring Boot 기반 웹 애플리케이션입니다. 이 문서는 실제 코드 기준으로만 정리했습니다.
 
