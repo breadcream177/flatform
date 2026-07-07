@@ -1,6 +1,37 @@
-# 개인 간편 웹페이지
+# Flatform
 
-취업 준비와 커뮤니티 활동을 함께 다루는 React + Spring Boot 기반 웹 애플리케이션입니다. 이 문서는 실제 코드 기준으로만 정리했습니다.
+## 목적
+
+웹 애플리케이션에서 클라이언트, 서버, 데이터베이스가 연결되는 흐름을 이해하기 위해 진행한 프로젝트입니다.  
+사용자 요청을 처리하고 결과를 화면에 반영하는 과정을 직접 구현해보는 데 목적을 두었습니다.
+
+## 프로젝트 소개
+
+React와 Spring Boot를 기반으로 구현한 개인 웹 애플리케이션 프로젝트입니다.  
+MariaDB를 활용해 사용자 데이터와 서비스 기능을 관리하는 구조로 개발했습니다.
+
+회원 기능, 게시판, 댓글, 검색, Todo, 블로그, 외부 API 연동, AI 요약 기능 등을 구현했습니다.
+
+## Preview
+
+
+
+
+
+
+<img width="2536" height="1341" alt="image" src="https://github.com/user-attachments/assets/56359be5-ae64-49a4-a9b4-725ae00ba24f" />
+
+<img width="2011" height="1345" alt="image" src="https://github.com/user-attachments/assets/d5cf65b2-854e-4d4c-8bac-234756d1594e" />
+
+<img width="1960" height="1344" alt="image" src="https://github.com/user-attachments/assets/5699196d-384b-44c0-8542-e6b4ba0f85e4" />
+
+<img width="1839" height="1342" alt="image" src="https://github.com/user-attachments/assets/ab4cbe4c-c759-4092-8dee-814ef670dcbe" />
+
+
+
+
+
+
 
 ## 검증 기준
 
